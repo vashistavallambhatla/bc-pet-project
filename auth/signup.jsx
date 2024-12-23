@@ -2,7 +2,8 @@ import { Button, Container, Typography,TextField,ThemeProvider} from "@mui/mater
 import supabase from "../supabase/supabaseClient"
 import { useState } from "react"
 import { isFormValid, theme } from "./authHelpers"
-import { buttonStyles, formHeadings } from "../src/commonStyles"
+import { authSwitchBtn, buttonStyles, formHeadings } from "../src/commonStyles"
+import {Link,useNavigate} from "react-router-dom"
 
 const SignUp = () => {
     const [firstname,setFirstname]=useState("")
@@ -12,6 +13,7 @@ const SignUp = () => {
     const [user,setUser]=useState(null)
     const [error,setError]=useState(null)
     const [signingUp,setSigningUp] = useState(false)
+    const navigate = useNavigate()
 
     const handleSignup = async (e) => {
         e.preventDefault()
@@ -25,13 +27,14 @@ const SignUp = () => {
         } else {
             alert(`User signedUp : ${response.data}`)
             setUser(response.user)
+            navigate("/")
         } 
         
     }
 
 
     return (
-        <div className="signup-page">
+        <div className="auth-page">
         <ThemeProvider theme={theme}>
             <Container maxWidth={false} className="auth-container">
                 <Typography variant="h3" sx={formHeadings}>Register</Typography>
@@ -40,7 +43,9 @@ const SignUp = () => {
                 <TextField id="outlined-email" label="Email" variant="outlined" required  onChange={e => setEmail(e.target.value)}/>
                 <TextField id="outlined-password" label="Password" variant="outlined" required onChange={e => handleChangePassword(e)}/>
                 <Button sx={buttonStyles} onClick={handleSignup}>{signingUp ? "Signing Up..." : "Signup"}</Button>
-                <Typography>Already have an account? <Typography sx={{color:"blue","&:hover" : {textDecoration : "underline"}}}>Login here</Typography></Typography>
+                <Typography>Already have an account? 
+                    <Link to="/signin" style={authSwitchBtn}> Login here</Link>
+                </Typography>
             </Container>
         </ThemeProvider>
         </div>
