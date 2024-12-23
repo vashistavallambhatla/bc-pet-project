@@ -4,19 +4,34 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import LogoutIcon from '@mui/icons-material/Logout'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { userState } from "../atoms/state/userAtom"
+import supabase from "../supabase/supabaseClient"
 
 const Navbar = () => {
     const navigate = useNavigate()
-    const {auth,logout} = useAuth()
+    const setUser = useSetRecoilState(userState)
+    const user = useRecoilValue(userState)
+
+    const handleLogout = async() => {
+        try {
+            const {error} = await supabase.auth.signOut()
+
+            if(error){
+                console.log(`Erro logging out : ${error.message}`)
+                throw error
+            }
+
+            setUser(null)
+
+        } catch(error){
+            console.log(`Logout failed : ${error.message}`)
+            throw error
+        }
+    }
 
     const handleProfile = () => {
-        console.log(auth)
-        if(!auth.isAuthenticated){
-            navigate("/signin")
-        } else {
-            console.log("here")
-            navigate("/profile")
-        }
+        navigate("/profile")
     }
 
     return (
@@ -33,8 +48,11 @@ const Navbar = () => {
                     <IconButton onClick={handleProfile}>
                         <PersonIcon sx={{textSize:"large"}}/>
                     </IconButton>
-                    { auth.isAuthenticated && 
-                    <IconButton onClick={()=>{logout()}}>
+                    { user && 
+                    <IconButton onClick={()=>{
+                        handleLogout();
+                        navigate("/");
+                    }}>
                         <LogoutIcon/>
                     </IconButton>
                     }

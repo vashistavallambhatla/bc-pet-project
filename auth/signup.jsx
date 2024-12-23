@@ -2,7 +2,7 @@ import { Button, Container, Typography,TextField,ThemeProvider} from "@mui/mater
 import supabase from "../supabase/supabaseClient"
 import { useState } from "react"
 import { isFormValid, theme } from "./authHelpers"
-import { authSwitchBtn, buttonStyles, formHeadings } from "../src/commonStyles"
+import { authContainer, authSwitchBtn, buttonStyles, formHeadings } from "../src/commonStyles"
 import {Link,useNavigate} from "react-router-dom"
 
 const SignUp = () => {
@@ -36,7 +36,7 @@ const SignUp = () => {
     return (
         <div className="auth-page">
         <ThemeProvider theme={theme}>
-            <Container maxWidth={false} className="auth-container">
+            <Container maxWidth={false} sx={authContainer}>
                 <Typography variant="h3" sx={formHeadings}>Register</Typography>
                 <TextField id="outlined-email" label="First Name" variant="outlined" required onChange={e => setFirstname(e.target.value)}/>
                 <TextField id="outlined-email" label="Last Name" variant="outlined" required onChange={e => setLastname(e.target.value)}/>
@@ -44,7 +44,7 @@ const SignUp = () => {
                 <TextField id="outlined-password" label="Password" variant="outlined" required onChange={e => handleChangePassword(e)}/>
                 <Button sx={buttonStyles} onClick={handleSignup}>{signingUp ? "Signing Up..." : "Signup"}</Button>
                 <Typography>Already have an account? 
-                    <Link to="/signin" style={authSwitchBtn}> Login here</Link>
+                    <Link to="/profile" style={authSwitchBtn}> Login here</Link>
                 </Typography>
             </Container>
         </ThemeProvider>

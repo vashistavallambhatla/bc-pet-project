@@ -1,6 +1,6 @@
 import { Button, Container, Typography,TextField,ThemeProvider, colors} from "@mui/material"
 import supabase from "../supabase/supabaseClient"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { isFormValid, theme } from "./authHelpers"
 import { buttonStyles,formHeadings,authSwitchBtn,authContainer} from "../src/commonStyles"
 import {Link,useNavigate} from "react-router-dom"

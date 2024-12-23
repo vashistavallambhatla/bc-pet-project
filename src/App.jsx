@@ -10,17 +10,15 @@ import Navbar from '../components/navbar'
 import HomePage from '../pages/homePage'
 import Profile from '../pages/profile'
 import { authState } from '../atoms/authAtom'
+import ProtectedRoutes from '../utils/protectedRoutes'
+import useAuthListener from '../hooks/useAuthListener'
+import { userState } from '../atoms/state/userAtom'
 
 function App() {
-  const [auth,setAuth] = useRecoilState(authState)
+  const user = useRecoilState(userState)
 
-  useEffect(()=>{
-    const localStorageAuth = localStorage.getItem("authState")
-    if(localStorageAuth){
-      const authData = JSON.parse(localStorageAuth)
-      setAuth({isAuthenticated : true,user : authData.user})
-    }
-  },[])
+  useAuthListener();
+  console.log(user)
   
   return (
     <>
@@ -28,10 +26,11 @@ function App() {
         <Navbar/>
         <Routes>
           <Route path={"/"} element={<HomePage/>}/>
-          <Route path={"/signin"} element={<SignIn/>}/>
           <Route path={"/signup"} element={<SignUp/>}/>
-          <Route path={"/forgotPassword"} element={<ForgotPassword/>}/>
-          <Route path={"/profile"} element={<Profile/>}/>
+          <Route element={<ProtectedRoutes/>}>
+            <Route path={"/forgotPassword"} element={<ForgotPassword/>}/>
+            <Route path={"/profile"} element={<Profile/>}/>
+          </Route>
         </Routes>
       </Router>
     </>
