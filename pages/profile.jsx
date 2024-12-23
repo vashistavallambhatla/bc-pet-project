@@ -5,7 +5,7 @@ import { userState } from "../atoms/state/userAtom"
 
 const Profile = () => {
     const user = useRecoilValue(userState)
-
+    
     if(!user) return <SignIn/>
     
     return (
