@@ -13,12 +13,13 @@ import { authState } from '../atoms/authAtom'
 import { AuthRoutes } from '../utils/protectedRoutes'
 import useAuthListener from '../hooks/useAuthListener'
 import { userState } from '../atoms/state/userAtom'
+import ProductPage from '../pages/productPage'
 
 function App() {
   const user = useRecoilValue(userState)
 
   useAuthListener();
-  console.log(`Main log : ${user}`);
+  console.log(`Main log : ${user?.id}`);
   
   return (
     <>
@@ -31,6 +32,7 @@ function App() {
             <Route path={"/forgotPassword"} element={<ForgotPassword/>}/>
           </Route>
           <Route path={"/profile"} element={<Profile/>}/>
+          <Route path={"/product"} element={<ProductPage/>}/>
         </Routes>
       </Router>
     </>

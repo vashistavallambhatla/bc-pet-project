@@ -1,6 +1,7 @@
 import { useRecoilValue } from "recoil"
 import SignIn from "../auth/login"
 import { userState } from "../atoms/state/userAtom"
+import { Container } from "@mui/material"
 
 
 const Profile = () => {
@@ -9,7 +10,9 @@ const Profile = () => {
     if(!user) return <SignIn/>
     
     return (
-        <div style={{color:"black"}}>Profile</div>
+        <Container maxWidth={false}>
+
+        </Container>
     )
 }
 

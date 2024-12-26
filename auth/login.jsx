@@ -11,7 +11,6 @@ const SignIn = () => {
     const [password,setPassword] = useState("")
     const [error,setError]=useState(null)
     const navigate = useNavigate()
-    const {login} = useAuth()
 
     const handleSignIn = async (e) => {
         e.preventDefault()
@@ -22,7 +21,6 @@ const SignIn = () => {
             setError(response.error)
         } else {
             alert(`User signed In : ${user.id}`)
-            login(user)
             navigate("/")
         }
     }
