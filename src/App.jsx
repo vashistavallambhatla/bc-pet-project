@@ -14,6 +14,9 @@ import { AuthRoutes } from '../utils/protectedRoutes'
 import useAuthListener from '../hooks/useAuthListener'
 import { userState } from '../atoms/state/userAtom'
 import ProductPage from '../pages/productPage'
+import { theme } from './commonStyles'
+import { ThemeProvider } from '@mui/material/styles';
+import Cart from '../pages/cart'
 
 function App() {
   const user = useRecoilValue(userState)
@@ -33,6 +36,7 @@ function App() {
           </Route>
           <Route path={"/profile"} element={<Profile/>}/>
           <Route path={"/product"} element={<ProductPage/>}/>
+          <Route path={"/cart"} element={<Cart/>}/>
         </Routes>
       </Router>
     </>

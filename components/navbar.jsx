@@ -4,6 +4,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import LogoutIcon from '@mui/icons-material/Logout'
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { userState } from "../atoms/state/userAtom"
 import supabase from "../supabase/supabaseClient"
@@ -83,8 +84,11 @@ const Navbar = () => {
                     <Typography variant="h4" sx={{fontWeight: "bold",fontFamily : "Raleway"}}>Coffee Zyada</Typography>
                 </Box>
                 <Box sx={{gap : "1rem"}}>
+                    <IconButton onClick={()=>{navigate("/cart")}}>
+                        <ShoppingBagOutlinedIcon/>
+                    </IconButton>
                     <IconButton onClick={handleProfile}>
-                        <PersonIcon sx={{textSize:"large"}}/>
+                        <PersonIcon/>
                     </IconButton>
                     { user && 
                     <IconButton onClick={()=>{

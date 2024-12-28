@@ -3,6 +3,7 @@ import zIndex from "@mui/material/styles/zIndex";
 
 const coffee = "#6F4E37"
 const grey = "#525252"
+const white = "white"
 
 const buttonStyles = {
     backgroundColor: coffee,
@@ -42,4 +43,56 @@ const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cove
 
 const homePageLeftBox = {width : "500px",display : "flex",flexDirection : "column"}
 
-export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox}
+const profilePageCards = {padding : "1rem",textTransform : "uppercase",width : "25%",textAlign : "center",borderRadius : "10px",padding : "10px",backgroundColor : white,marginTop : "50px"}
+
+export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme}
+
+import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Raleway, sans-serif',
+    h4: {
+      fontFamily: 'Raleway, sans-serif',
+    },
+    h7: {
+      fontFamily: 'Raleway, sans-serif',
+    },
+    body1: {
+      fontFamily: 'Raleway, sans-serif',
+    },
+    body2: {
+      fontFamily: 'Raleway, sans-serif',
+    },
+  },
+  components: {
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          fontFamily: 'Raleway, sans-serif',
+        }
+      }
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Raleway, sans-serif',
+        }
+      }
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Raleway, sans-serif',
+        }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Raleway, sans-serif',
+        }
+      }
+    }
+  }
+});

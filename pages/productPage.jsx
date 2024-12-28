@@ -9,7 +9,7 @@ const ProductPage = () => {
         description : `Our house blend might just remind you of dessert, and we’re perfectly okay with that. With bold notes of zesty orange, rich chocolate, and sweet brown sugar, this coffee is big-bodied, well-structured, and deeply complex. It’s what keeps our team at Third Wave Coffee going strong. Potent and flavorful on its own, or decadently indulgent with milk or cream, every sip is a delightful experience.`,
         profile : "Orange, Chocolate, Brown Sugar",
         roast_type : "Medium Dark Roast",
-        category : "100% ARABICA Coffee"
+        category : "100% Arabica Coffee"
     }
 
     return (
