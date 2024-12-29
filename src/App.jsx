@@ -17,6 +17,7 @@ import ProductPage from '../pages/productPage'
 import { theme } from './commonStyles'
 import { ThemeProvider } from '@mui/material/styles';
 import Cart from '../pages/cart'
+import Collections from '../pages/collections'
 
 function App() {
   const user = useRecoilValue(userState)
@@ -35,8 +36,9 @@ function App() {
             <Route path={"/forgotPassword"} element={<ForgotPassword/>}/>
           </Route>
           <Route path={"/profile"} element={<Profile/>}/>
-          <Route path={"/product"} element={<ProductPage/>}/>
+          <Route path={"/product/:productId"} element={<ProductPage/>}/>
           <Route path={"/cart"} element={<Cart/>}/>
+          <Route path={"/collections/:collection"} element={<Collections/>}/>
         </Routes>
       </Router>
     </>

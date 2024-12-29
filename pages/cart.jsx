@@ -19,12 +19,12 @@ const Cart = () => {
                 if(cartError) throw new Error(`Error fetching cartId : ${cartId}`)
                 if(!cartId) throw new Error(`No cart found for user`)
 
-                const {data : productIds,error : productIdsError} = await supabase.from("cartItems").select("product_id").eq("cart_id",cartId)
+                const {data : cartItems,error : cartItemsError} = await supabase.from("cartItems").select("*").eq("cart_id",cartId)
 
-                if(productIdsError) throw new Error(`Error fetching productIds : ${productIdsError}`)
-                if(!productIds || productIds.length===0) throw new Error(`No cartItems found for user`)
+                if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError}`)
+                if(!cartItems || cartItems.length===0) throw new Error(`No cartItems found for user`)
 
-                const productIdsArray = productIds.map(item => item.product_id)
+                const productIdsArray = cartItems.map(item => item.product_id)
                 
                 const {data : products,error : productsError} = await supabase.from("products").select("*").in("id",productIdsArray)
 

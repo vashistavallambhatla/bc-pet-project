@@ -7,15 +7,17 @@ const Card = ({product}) => {
     const navigate = useNavigate() 
 
     return (
-        <Container>
+        <Container maxWidth={false}>
             <Box sx={{display : "flex",flexDirection : "column",gap : "1rem"}}>
-                <img src={product.img} style={{width : "400px"}}></img>
+                <Box>
+                    <img src={product.image_url} style={{width : "350px",height : "350px",objectFit : "cover"}}></img>
+                </Box>
                 <Box>
                   <Typography sx={{fontWeight : "bold"}}>{product.name}</Typography>
                   <Typography>{product.roast_type}</Typography>
                   <Typography>{product.profile}</Typography>
                 </Box>
-                <Button sx={productCardBtn} onClick={() => {navigate("/product")}}>VIEW PRODUCT rs 540</Button>
+                <Button sx={productCardBtn} onClick={() => {navigate("/product/1")}}>VIEW PRODUCT rs {product.price}</Button>
             </Box>
         </Container>
     )

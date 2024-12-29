@@ -6,7 +6,7 @@ import CoffeeForEveryOne from "../components/coffeeForEveryone"
 const HomePage = () => {
 
     return (
-        <Container maxWidth={false}>
+        <Container maxWidth={false} >
             <BestSellers/>
             <CoffeeForEveryOne/>
         </Container>

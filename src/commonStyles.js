@@ -39,7 +39,7 @@ const authSwitchBtn = {color : coffee, textDecoration : "none", "&:hover": {text
 
 const navbarStyle = {backgroundColor : "white",padding : "1rem",color : grey,position : "sticky",top : "zero"}
 
-const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cover"}
+const coffeeForEveryOneImg = {width : "350px",height : "500px",objectFit : "cover"}
 
 const homePageLeftBox = {width : "500px",display : "flex",flexDirection : "column"}
 

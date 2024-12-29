@@ -1,7 +1,10 @@
 import { Container,Typography } from "@mui/material"
 import Product from "../components/product"
+import { useParams } from "react-router-dom"
 
 const ProductPage = () => {
+
+    const params = useParams()
 
     const product = {
         image : "https://www.thirdwavecoffeeroasters.com/cdn/shop/products/4_17b8f134-9cc2-4265-9645-f884c60422ff_1200x1200.jpg?v=1672991806",

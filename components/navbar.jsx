@@ -40,7 +40,7 @@ const Navbar = () => {
 
     return (
         <AppBar sx={navbarStyle}>
-            <Toolbar sx={{display : "flex",justifyContent : "space-between",textTransform: 'uppercase',position: "relative",alignItems : "center"}}>
+            <Toolbar sx={{display : "flex",justifyContent : "space-between",textTransform: 'uppercase',position: "relative",alignItems : "center",padding : "0",margin : "0"}}>
                 <Box sx={{display : "flex",gap : "2rem"}} onClick={()=>{}}>
                     <Typography id="shop-dropdown" onClick={(e) => setShopAnchor(e.currentTarget)} sx={{cursor : "pointer"}}>shop</Typography>
                     <Menu
@@ -57,10 +57,22 @@ const Navbar = () => {
                             horizontal: 'left',
                        }}
                    >
-                        <MenuItem onClick={() => setShopAnchor(null)}>All items</MenuItem>
-                        <MenuItem onClick={() => setShopAnchor(null)}>Coffe Beans</MenuItem>
-                        <MenuItem onClick={() => setShopAnchor(null)}>Easy Coffee Bags</MenuItem>
-                        <MenuItem onClick={() => setShopAnchor(null)}>Easy Cold Brew Bags</MenuItem>
+                        <MenuItem onClick={() => {
+                            navigate("/collections/all")
+                            setShopAnchor(null)
+                        }}>All items</MenuItem>
+                        <MenuItem onClick={() => {
+                            window.location.href = "/collections/beans"
+                            setShopAnchor(null)
+                        }}>Coffe Beans</MenuItem>
+                        <MenuItem onClick={() => {
+                            navigate("/collections/easy-bags")
+                            setShopAnchor(null)
+                        }}>Easy Coffee Bags</MenuItem>
+                        <MenuItem onClick={() => {
+                            window.location.href = "/collections/cold-brew-bags"
+                            setShopAnchor(null)
+                        }}>Easy Cold Brew Bags</MenuItem>
                     </Menu>
                     <Typography id="learn-and-do-dropdown" onClick={(e)=>{setLearnAnchor(e.currentTarget)}} sx={{cursor : "pointer"}} >learn & do</Typography>
                     <Menu
