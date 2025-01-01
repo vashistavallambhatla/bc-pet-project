@@ -1,25 +1,64 @@
 import {Container,Box,Typography,Button,FormControl,InputLabel,Select,MenuItem} from "@mui/material"
 import { buttonStyles } from "../src/commonStyles"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { userState } from "../atoms/state/userAtom"
+import { useRecoilValue } from "recoil"
+import supabase from "../supabase/supabaseClient"
+import { useParams } from "react-router-dom"
 
-const Product = ({product}) => {
+const Product = () => {
+    const user = useRecoilValue(userState)
     const [grindSize,setGrindSize] = useState("Whole Beans")
-    const [size,getSize] = useState(250)
+    const [size,setSize] = useState(250)
     const [quantity,setQuantity] = useState(1)
+    const { productId } = useParams()
+    const [current,setCurrent] = useState(null)
+
+    useEffect(() => {
+
+        const getProduct = async() => {
+            console.log(productId)
+            const {data : response,error} = await supabase.from("products").select("*").eq("id",productId).single()
+            if(error) throw new Error(`Error while fetching the product : ${error.message}`)
+            if(!response || response.length===0) throw new Error(`Null Product`)
+            
+            console.log(response)
+            setCurrent(response)
+        }
+
+        getProduct()
+    },[])
+
+    const handleAddToCart = async () => {
+        try{
+            const {data : cartId,error : cartIdError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
+            if(cartIdError) throw new Error(`Error fetching cartId : ${cartIdError.message}`)
+            console.log(cartId)
+
+            const {data : response,error} = await supabase.from("cart_items").insert([{cart_id : cartId.id,product_id : productId,quantity : quantity,weight : size,grind_size : grindSize}])
+
+            if(error) throw new Error(`Error while add item to the cart : ${error}`)
+            console.log("Item added to the cart successfully",response)
+        } catch(error) {
+            console.error(`Error while adding to the cart ${error.message}`)
+        }
+    }
+
+    if(!current) return <div></div>
 
     return (
         <Container maxWidth={false} sx={{display : "flex",fontFamily : "Raleway"}}>
             <Box sx={{width : "50%",height : "100vh",display : "flex",alignItems : "center",justifyContent : "right",paddingRight : "20px"}}>
-                <img src="https://www.thirdwavecoffeeroasters.com/cdn/shop/products/4_17b8f134-9cc2-4265-9645-f884c60422ff_1200x1200.jpg?v=1672991806" style={{maxWidth : "700px"}}/>
+                <img src={current.image_url} style={{maxWidth : "700px"}}/>
             </Box>
                 <Box sx={{maxWidth : "50%",height : "100vh",display : "flex",justifyContent : "left",paddingLeft : "20px",alignItems : "center"}}>
                     <Box sx={{width  : "70%",display : "flex",flexDirection : "column",gap : "1.5rem"}}>
-                    <Typography variant="h4" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{product.title}</Typography>
-                    <Typography variant="h7" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{product.profile}</Typography>
-                    <Typography>{product.description}</Typography>
+                    <Typography variant="h4" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{current.name}</Typography>
+                    <Typography variant="h7" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{current.profile}</Typography>
+                    <Typography>{current.description}</Typography>
                     <Box sx={{display : "flex",gap : "3rem"}}>
-                        <Typography >{product.roast_type}</Typography>
-                        <Typography>{product.category}</Typography>
+                        <Typography >{current.roast_type}</Typography>
+                        <Typography>100% Arabica Coffee</Typography>
                     </Box>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Grind size</InputLabel>
@@ -68,7 +107,7 @@ const Product = ({product}) => {
                         </FormControl>
                     </Box>
                     <Box sx={{display : "flex",gap : "3rem"}}>
-                        <Button sx={buttonStyles}>Add to cart</Button>
+                        <Button sx={buttonStyles} onClick={()=>{handleAddToCart()}}>Add to cart</Button>
                         <Button sx={buttonStyles}>Buy now</Button>
                     </Box>
                 </Box>

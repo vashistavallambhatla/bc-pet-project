@@ -58,7 +58,7 @@ const Navbar = () => {
                        }}
                    >
                         <MenuItem onClick={() => {
-                            navigate("/collections/all")
+                            window.location.href = "/collections/all"
                             setShopAnchor(null)
                         }}>All items</MenuItem>
                         <MenuItem onClick={() => {
@@ -66,11 +66,11 @@ const Navbar = () => {
                             setShopAnchor(null)
                         }}>Coffe Beans</MenuItem>
                         <MenuItem onClick={() => {
-                            navigate("/collections/easy-bags")
+                            window.location.href = "/collections/easy-bags"
                             setShopAnchor(null)
                         }}>Easy Coffee Bags</MenuItem>
                         <MenuItem onClick={() => {
-                            window.location.href = "/collections/cold-brew-bags"
+                            window.location.href = "/collections/cold-brew"
                             setShopAnchor(null)
                         }}>Easy Cold Brew Bags</MenuItem>
                     </Menu>

@@ -18,6 +18,7 @@ import { theme } from './commonStyles'
 import { ThemeProvider } from '@mui/material/styles';
 import Cart from '../pages/cart'
 import Collections from '../pages/collections'
+import CheckOut from '../pages/checkout'
 
 function App() {
   const user = useRecoilValue(userState)
@@ -39,6 +40,7 @@ function App() {
           <Route path={"/product/:productId"} element={<ProductPage/>}/>
           <Route path={"/cart"} element={<Cart/>}/>
           <Route path={"/collections/:collection"} element={<Collections/>}/>
+          <Route path={"/checkout"} element={<CheckOut/>}/>
         </Routes>
       </Router>
     </>

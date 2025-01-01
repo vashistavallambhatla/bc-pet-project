@@ -4,10 +4,10 @@ import { coffeeForEveryOneImg,homePageHeadings,homePageLeftBox } from '../src/co
 const CoffeeForEveryOne = () => {
     const title = {fontWeight : "bold",textTransform : "uppercase"}
     return (
-        <Container maxWidth={false} sx={{marginBottom : "10rem",width: '100%',padding : 0,
+        <Container maxWidth={false} sx={{marginBottom : "5rem",width: '100%',padding : 0,
             maxWidth: '100vw !important',
             overflowX: 'hidden'}}>
-            <Box sx={{display : "flex",gap : "2em"}}>
+            <Box sx={{display : "flex",gap : "4em"}}>
             <Box sx={homePageLeftBox                        }>
                 <Typography sx={homePageHeadings}>COFFEE FOR EVERYONE</Typography>
                 <Typography>Whether you just started your coffee journey or you’re a seasoned coffee-lover, there’s something for everyone to sip on.</Typography>

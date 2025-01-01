@@ -39,13 +39,13 @@ const authSwitchBtn = {color : coffee, textDecoration : "none", "&:hover": {text
 
 const navbarStyle = {backgroundColor : "white",padding : "1rem",color : grey,position : "sticky",top : "zero"}
 
-const coffeeForEveryOneImg = {width : "350px",height : "500px",objectFit : "cover"}
+const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cover"}
 
 const homePageLeftBox = {width : "500px",display : "flex",flexDirection : "column"}
 
 const profilePageCards = {padding : "1rem",textTransform : "uppercase",width : "25%",textAlign : "center",borderRadius : "10px",padding : "10px",backgroundColor : white,marginTop : "50px"}
 
-export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme}
+export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme,coffee}
 
 import { createTheme } from '@mui/material/styles';
 
@@ -63,7 +63,7 @@ const theme = createTheme({
     },
     body2: {
       fontFamily: 'Raleway, sans-serif',
-    },
+    }
   },
   components: {
     MuiSelect: {
@@ -88,6 +88,13 @@ const theme = createTheme({
       }
     },
     MuiButton: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Raleway, sans-serif',
+        }
+      }
+    },
+    MuiTypography: {
       styleOverrides: {
         root: {
           fontFamily: 'Raleway, sans-serif',

@@ -20,7 +20,7 @@ const Collections = () => {
         fetchCollections()
     },[])
 
-    if(!products) return <div>No collection found</div>
+    if(!products) return <div></div>
 
     return (
         <Container maxWidth={false} sx={{display : "flex",justifyContent : "center",marginTop : "5rem"}}>
