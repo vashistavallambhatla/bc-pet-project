@@ -12,7 +12,9 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue } from "recoil";
-import {cartAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, paymentFormAtom} from "../atoms/state/cartAtom.js"
+import supabase from "../supabase/supabaseClient.js";
+import { userState } from "../atoms/state/userAtom.js";
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
@@ -32,8 +34,21 @@ function getStepContent(step){
 const CheckOut = () => {
     const [activeStep,setActiveStep] = useState(0)
     const cartState = useRecoilValue(cartAtom)
+    const addressForm = useRecoilValue(addressFormAtom)
+    const paymentForm = useRecoilValue(paymentFormAtom)
+    const user = useRecoilValue(userState)
+
+    const handleOrder = async () => {
+      const {data : order,error : orderError} = await supabase.from("orders").insert([{
+        user_id : user.id,
+        total_amount : cartState.total_amount,
+      }])
+    }
 
     const handleNext = () => {
+        if(activeStep === 3){
+
+        }
         setActiveStep(currentStep => {
             const newStep = currentStep + 1;
             localStorage.setItem("activeStep", newStep);
@@ -48,16 +63,6 @@ const CheckOut = () => {
         });
     }
 
-    useEffect(() => {
-        const localStorageActiveState = localStorage.getItem("activeStep");
-        if (localStorageActiveState !== null) {
-            const parsedStep = Number(localStorageActiveState);
-            if (!isNaN(parsedStep)) {
-                setActiveStep(parsedStep);
-            }
-        }
-        console.log(cartState)
-    }, []);
     
     return (
         <Container>

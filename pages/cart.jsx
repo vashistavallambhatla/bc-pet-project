@@ -30,7 +30,8 @@ const Cart = () => {
 
                 if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError.message}`)
                 if(!cartItems || cartItems.length===0) throw new Error(`No cartItems found for user`)
-                    
+                
+                setCartState(cartItems)
                 setCart(cartItems)
             }
 
@@ -47,7 +48,7 @@ const Cart = () => {
     const totalPrice = cart.reduce((total, cartItem) => {
         const price = cartItem.products.price;
         const quantity = cartItem.quantity;
-        setCartState(total+price*quantity)
+        setCartState((prev) => ({...prev,total_amount : total + price * quantity}))
         return total + price * quantity;
     }, 0); 
 

@@ -9,15 +9,37 @@ const Collections = () => {
     const [products,setProducts] = useState(null)
 
     useEffect(()=>{
-        const fetchCollections = async() => {
+        const fetchCollections = async() => {    
             const {data : collections,error : collectionError} = await supabase.from('products').select("*").eq("category",collection)
             if(collectionError) throw new Error(`Error fetching collection ${collection} : ${collectionError}`)
             if(!collections || collections.length===0) throw new Error(`No collections found`)
-            console.log(collections)
             setProducts(collections)
         }
 
-        fetchCollections()
+        const fetchAllItems = async() => {
+            const {data : collections,error : collectionError} = await supabase.from('products').select("*")
+            if(collectionError) throw new Error(`Error fetching all items ${collection} : ${collectionError}`)
+            if(!collections || collections.length===0) throw new Error(`No items found`)
+            setProducts(collections)
+        }
+
+        const fetchSpecificCollections = async() => {
+            const {data : collections,error : collectionError} = await supabase.from('products').select("*").eq("collections",collection)
+            if(collectionError) throw new Error(`Error fetching all items ${collection} : ${collectionError}`)
+            if(!collections || collections.length===0) throw new Error(`No items found`)
+            setProducts(collections)
+        }
+
+        if(collection === "all"){
+            fetchAllItems()
+        }
+        else if (collection==="single-origin" || collection==="special-blends") {
+            fetchSpecificCollections()
+        }
+        else {
+            fetchCollections()
+        }
+
     },[])
 
     if(!products) return <div></div>
