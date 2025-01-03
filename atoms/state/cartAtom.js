@@ -15,3 +15,8 @@ export const addressFormAtom = atom({
     default : {}
 })
 
+export const totalAtom = atom({
+    key : "totalAtom",
+    default : null
+})
+

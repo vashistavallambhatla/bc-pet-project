@@ -16,13 +16,6 @@ const PaymentForm = () => {
         setPaymentForm((prev) => ({...prev,[name] : value}))
     }
 
-    useEffect(()=>{
-        if(!cart){
-            localStorage.removeItem("activeState")
-            navigate("/cart")
-        }
-    },[])
-
     if (!cart) {
         return null;
     }

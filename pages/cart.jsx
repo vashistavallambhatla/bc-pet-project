@@ -48,7 +48,6 @@ const Cart = () => {
     const totalPrice = cart.reduce((total, cartItem) => {
         const price = cartItem.products.price;
         const quantity = cartItem.quantity;
-        setCartState((prev) => ({...prev,total_amount : total + price * quantity}))
         return total + price * quantity;
     }, 0); 
 

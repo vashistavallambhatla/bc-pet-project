@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue } from "recoil";
-import {addressFormAtom, cartAtom, paymentFormAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, paymentFormAtom, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 
@@ -33,22 +33,45 @@ function getStepContent(step){
 
 const CheckOut = () => {
     const [activeStep,setActiveStep] = useState(0)
-    const cartState = useRecoilValue(cartAtom)
+    const cart = useRecoilValue(cartAtom)
     const addressForm = useRecoilValue(addressFormAtom)
     const paymentForm = useRecoilValue(paymentFormAtom)
     const user = useRecoilValue(userState)
+    const total = useRecoilValue(totalAtom)
 
     const handleOrder = async () => {
-      const {data : order,error : orderError} = await supabase.from("orders").insert([{
-        user_id : user.id,
-        total_amount : cartState.total_amount,
-      }])
-    }
+      try {
+        const { data: order, error: orderError } = await supabase.from("orders").insert([{
+          user_id: user.id,
+          total_amount: total,
+          shipping_address: JSON.stringify(addressForm),
+          billing_address: JSON.stringify(paymentForm),
+        }]);
+    
+        if (orderError) throw new Error(`Error occurred while creating an order: ${orderError.message}`);
+        if (!order || order.length === 0) throw new Error('No order created');
+    
+        const orderId = order[0].id;
+    
+        const orderItems = cart.map(cartItem => ({
+          order_id: orderId,
+          product_id: cartItem.product_id,
+          quantity: cartItem.quantity,
+        }));
+    
+        const { data: orderItemsData, error: orderItemsError } = await supabase.from("order_items").insert(orderItems);
+    
+        if (orderItemsError) throw new Error(`Error occurred while creating order items: ${orderItemsError.message}`);
+        if (!orderItemsData || orderItemsData.length === 0) throw new Error('No order items created');
+    
+        console.log('Order items created successfully:', orderItemsData);
+      } catch (error) {
+        console.error('Error in handleOrder:', error);
+      }
+    };
+    
 
     const handleNext = () => {
-        if(activeStep === 3){
-
-        }
         setActiveStep(currentStep => {
             const newStep = currentStep + 1;
             localStorage.setItem("activeStep", newStep);
