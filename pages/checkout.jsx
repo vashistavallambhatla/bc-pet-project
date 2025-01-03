@@ -66,10 +66,29 @@ const CheckOut = () => {
         if (!orderItemsData || orderItemsData.length === 0) throw new Error('No order items created');
     
         console.log('Order items created successfully:', orderItemsData);
+        deleteCartItems()
+
       } catch (error) {
         console.error('Error in handleOrder:', error);
       }
     };
+
+    const deleteCartItems = async() => {
+      try {
+
+        const {data : cartId,error : cartIdError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
+
+        if(cartIdError) throw new Error(`Error while fetching cartId`,cartIdError)
+        if(!cartId) throw new Error(`No associated cartId found`)
+        
+        const {data : deletedItems,error : deleteCartError} = await supabase.from("cart_items").delete().eq("cart_id",cartId.id)
+        if(deleteCartError) throw new Error(`Error while deleting the cartItems`,deleteCartError)
+        console.log(deletedItems)
+        console.log('Cart items deleted successfully')
+      } catch(error) {
+        console.error(error)
+      }
+    }
     
     const handleNext = () => {
       if(activeStep === steps.length - 1) {

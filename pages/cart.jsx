@@ -7,6 +7,8 @@ import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
 import { cartAtom, totalAtom } from "../atoms/state/cartAtom"
+import ClipLoader from "react-spinners/ClipLoader";
+import { CircleLoader } from "react-spinners"
 
 const Cart = () => {
     const user = useRecoilValue(userState)
@@ -19,7 +21,7 @@ const Cart = () => {
     useEffect(()=>{
 
         if(user){
-
+            setLoading(true)
             const fetchCart = async() => {
 
                 const {data : cartId,error : cartError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
@@ -55,9 +57,11 @@ const Cart = () => {
     }, [cart, totalPrice, setTotalAtom]);
     
     if(loading) return (
-        <div>Loading...</div>
+        <div>
+            <CircleLoader/>
+        </div>
     )
-    if(!cart) return <div></div> 
+    if(!cart && !loading) return <div>Empty Cart</div> 
 
     return (
         <Container maxWidth={false} sx={{display : "flex",flexDirection : "column",alignItems : "center",marginTop : "60px"}}>

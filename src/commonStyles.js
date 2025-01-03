@@ -43,7 +43,7 @@ const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cove
 
 const homePageLeftBox = {width : "500px",display : "flex",flexDirection : "column"}
 
-const profilePageCards = {padding : "1rem",textTransform : "uppercase",width : "25%",textAlign : "center",borderRadius : "10px",padding : "10px",backgroundColor : white,marginTop : "50px"}
+const profilePageCards = {textTransform : "uppercase",maxWidth : "500px",textAlign : "center",borderRadius : "10px",padding : "30px 50px",backgroundColor : white,marginTop : "50px"}
 
 export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme,coffee}
 

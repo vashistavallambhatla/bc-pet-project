@@ -83,7 +83,9 @@ const Product = () => {
                                 id="size-simple-select"
                                 defaultValue={size}
                                 label="packet-size"
-                                onChange={(e) => {setSize(e.target.value)}}
+                                onChange={(e) => {
+                                    setSize(e.target.value)
+                                }}
                             >
                                 <MenuItem value={250}>250</MenuItem>
                                 <MenuItem value={500}>500</MenuItem>
@@ -105,6 +107,9 @@ const Product = () => {
                                 <MenuItem value={5}>5</MenuItem>
                             </Select>
                         </FormControl>
+                    </Box>
+                    <Box>
+                        <Typography variant="h5" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>Price : {size === 250 ? current.price : current.price*2}</Typography>
                     </Box>
                     <Box sx={{display : "flex",gap : "3rem"}}>
                         <Button sx={buttonStyles} onClick={()=>{handleAddToCart()}}>Add to cart</Button>

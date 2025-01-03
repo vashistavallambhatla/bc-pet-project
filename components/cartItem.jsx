@@ -11,6 +11,7 @@ const CartItem = ({item}) => {
             if(error) throw new Error(`Error while deleting the cartItem : ${error.message}`)
             
             console.log(`Deleted cart items: `,response)
+            window.location.reload()
         } catch(error){
             console.error(`Error: `,error)
         }
