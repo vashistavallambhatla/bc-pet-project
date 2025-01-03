@@ -9,7 +9,6 @@ const Review = () => {
     const cart = useRecoilValue(cartAtom)
     const paymentDetails = useRecoilValue(paymentFormAtom)
     const address = useRecoilValue(addressFormAtom)
-    const setTotalAtom = useSetRecoilState(totalAtom)
 
     const navigate = useNavigate()
 

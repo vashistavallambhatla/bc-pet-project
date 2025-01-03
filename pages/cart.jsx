@@ -6,7 +6,7 @@ import { userState } from "../atoms/state/userAtom"
 import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
-import { cartAtom } from "../atoms/state/cartAtom"
+import { cartAtom, totalAtom } from "../atoms/state/cartAtom"
 
 const Cart = () => {
     const user = useRecoilValue(userState)
@@ -14,6 +14,7 @@ const Cart = () => {
     const [loading,setLoading] = useState(true)
     const navigate = useNavigate()
     const setCartState = useSetRecoilState(cartAtom)
+    const setTotalAtom = useSetRecoilState(totalAtom)
 
     useEffect(()=>{
 
@@ -39,17 +40,24 @@ const Cart = () => {
         }
         setLoading(false)
     },[user])
+
+
+    const totalPrice = cart ? cart.reduce((total, cartItem) => {
+        const price = cartItem.products.price;
+        const quantity = cartItem.quantity;
+        return total + price * quantity;
+    }, 0) : 0;
+
+    useEffect(() => {
+        if (cart) {
+            setTotalAtom(totalPrice);
+        }
+    }, [cart, totalPrice, setTotalAtom]);
     
     if(loading) return (
         <div>Loading...</div>
     )
-    if(!cart) return <div></div>
-
-    const totalPrice = cart.reduce((total, cartItem) => {
-        const price = cartItem.products.price;
-        const quantity = cartItem.quantity;
-        return total + price * quantity;
-    }, 0); 
+    if(!cart) return <div></div> 
 
     return (
         <Container maxWidth={false} sx={{display : "flex",flexDirection : "column",alignItems : "center",marginTop : "60px"}}>

@@ -12,6 +12,7 @@ const Profile = () => {
     const user = useRecoilValue(userState)
     const [userDetails,setUserDetails] = useState(null)
     const [loading,setLoading] = useState(false)
+    const [orderItems,setOrderItems] = useState(null)
 
     useEffect(()=>{
         if(user){
@@ -28,10 +29,38 @@ const Profile = () => {
                     console.log('User found:', userData);
                     setUserDetails(userData)
                 }
+
+            }
+            
+            const fetchOrders = async() => {
+                try {
+                    const {data : orders,error : ordersError} = await supabase.from("orders").select("*").eq("user_id",user.id)
+                    if(ordersError) throw new Error(`Error while fetching previous orders`,ordersError)
+                    console.log(orders)
+
+                    const ordersWithItems = await Promise.all(
+                        orders.map(async(order) => {
+                            const {data : orderItemsWithProducts,error : orderItemsError} = await supabase.from("order_items").select("quantity,products(name,image_url,price)").eq("order_id",order.order_id)
+
+                            if(orderItemsError) throw new Error(`Error while fetching orderItems`,orderItemsError)
+                            
+                            return {
+                                ...order,
+                                orderItemsWithProducts
+                            }
+                        })
+                    )
+                    if(!ordersWithItems || ordersWithItems.length===0) throw new Error('No orders with items')
+                    setOrderItems(ordersWithItems)
+                } catch (error){
+                    throw new Error(error)
+                }
+
                 setLoading(false)
             }
 
             fetchUserDetails()
+            fetchOrders()
         }
     },[user])
     
@@ -47,6 +76,9 @@ const Profile = () => {
             <Box sx={profilePageCards}>
                 <Typography variant="h6" sx={{fontWeight : "bold"}}>Orders</Typography>
                 <Typography>You have no orders yet</Typography>
+            </Box>
+            <Box sx={profilePageCards}>
+                
             </Box>
         </Container>
     )

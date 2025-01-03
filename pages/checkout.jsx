@@ -46,12 +46,13 @@ const CheckOut = () => {
           total_amount: total,
           shipping_address: JSON.stringify(addressForm),
           billing_address: JSON.stringify(paymentForm),
-        }]);
+        }]).select();
     
         if (orderError) throw new Error(`Error occurred while creating an order: ${orderError.message}`);
+      
         if (!order || order.length === 0) throw new Error('No order created');
     
-        const orderId = order[0].id;
+        const orderId = order[0].order_id;
     
         const orderItems = cart.map(cartItem => ({
           order_id: orderId,
@@ -59,7 +60,7 @@ const CheckOut = () => {
           quantity: cartItem.quantity,
         }));
     
-        const { data: orderItemsData, error: orderItemsError } = await supabase.from("order_items").insert(orderItems);
+        const { data: orderItemsData, error: orderItemsError } = await supabase.from("order_items").insert(orderItems).select();
     
         if (orderItemsError) throw new Error(`Error occurred while creating order items: ${orderItemsError.message}`);
         if (!orderItemsData || orderItemsData.length === 0) throw new Error('No order items created');
@@ -70,13 +71,17 @@ const CheckOut = () => {
       }
     };
     
-
     const handleNext = () => {
+      if(activeStep === steps.length - 1) {
+        
+        handleOrder();
+    } else {
         setActiveStep(currentStep => {
             const newStep = currentStep + 1;
             localStorage.setItem("activeStep", newStep);
             return newStep;
         });
+    }
     }
     const handlePrev = () => {
         setActiveStep(currentStep => {
