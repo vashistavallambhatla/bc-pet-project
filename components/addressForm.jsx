@@ -9,7 +9,6 @@ import { cartAtom } from "../atoms/state/cartAtom";
 
 
 const AddressForm = () => {
-    const navigate = useNavigate()
     const [addressFormData,setAddressFormData] = useRecoilState(addressFormAtom)
     const cart  = useRecoilValue(cartAtom)
 
@@ -25,9 +24,7 @@ const AddressForm = () => {
         }
     },[])
 
-    if (!cart) {
-        return null;
-    }
+    if(!cart) return null
 
     return (
         <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>

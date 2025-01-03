@@ -9,16 +9,20 @@ import { useEffect } from "react";
 const PaymentForm = () => {
     const [paymentForm,setPaymentForm] = useRecoilState(paymentFormAtom)
     const cart = useRecoilValue(cartAtom)
-    const navigate = useNavigate()
 
     const handleChange = (e) => {
         const {name,value} = e.target;
         setPaymentForm((prev) => ({...prev,[name] : value}))
     }
 
-    if (!cart) {
-        return null;
-    }
+    useEffect(()=>{
+        if(!cart){
+            localStorage.removeItem("activeState")
+            navigate("/cart")
+        }
+    },[])
+
+    if(!cart) return null
 
     return (
         <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>

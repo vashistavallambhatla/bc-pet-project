@@ -13,6 +13,13 @@ const Review = () => {
 
     const navigate = useNavigate()
 
+    useEffect(()=>{
+        if(!cart){
+            localStorage.removeItem("activeState")
+            navigate("/cart")
+        }
+    },[])
+
     if (!cart || !paymentDetails || !address) {
         return null;
     }
@@ -20,7 +27,6 @@ const Review = () => {
     const totalPrice = cart.reduce((total, cartItem) => {
         const price = cartItem.products.price;
         const quantity = cartItem.quantity;
-        setTotalAtom(total+price*quantity)
         return total + price * quantity;
     }, 0); 
 
@@ -31,7 +37,7 @@ const Review = () => {
                     <Typography variant="h9" sx={{fontWeight : "bold"}}>Order Items</Typography>
                     <Box sx={{display : "flex",flexDirection : "column",boxSizing : "border-box"}}>
                         {
-                            cart.map(cartItem => (
+                           Array.isArray(cart) && cart.map(cartItem => (
                                 <Box key={cartItem.id} sx={{width : "100px"}}>
                                     <ReviewItem item={cartItem}/>
                                 </Box>
