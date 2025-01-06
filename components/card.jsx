@@ -8,7 +8,7 @@ const Card = ({product}) => {
 
     return (
         <Container maxWidth={false}>
-            <Box sx={{display : "flex",flexDirection : "column",gap : "1rem"}}>
+            <Box sx={{display : "flex",flexDirection : "column",gap : "1rem"}} onClick={()=>{ navigate(`/product/${product.id}`)}}>
                 <Box>
                     <img src={product.image_url} style={{width : "400px",height : "400px",objectFit : "cover"}}></img>
                 </Box>
@@ -17,10 +17,7 @@ const Card = ({product}) => {
                   <Typography>{product.roast_type}</Typography>
                   <Typography>{product.profile}</Typography>
                 </Box>
-                <Button sx={productCardBtn} onClick={() => {
-                    console.log(product.id)
-                    navigate(`/product/${product.id}`)
-                }}>VIEW PRODUCT rs {product.price}</Button>
+                <Button sx={productCardBtn}>VIEW PRODUCT rs {product.price}</Button>
             </Box>
         </Container>
     )

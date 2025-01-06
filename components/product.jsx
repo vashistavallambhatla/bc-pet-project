@@ -1,4 +1,4 @@
-import {Container,Box,Typography,Button,FormControl,InputLabel,Select,MenuItem} from "@mui/material"
+import {Container,Box,Typography,Button,FormControl,InputLabel,Select,MenuItem, Alert} from "@mui/material"
 import { buttonStyles } from "../src/commonStyles"
 import { useEffect, useState } from "react"
 import { userState } from "../atoms/state/userAtom"
@@ -13,6 +13,7 @@ const Product = () => {
     const [quantity,setQuantity] = useState(1)
     const { productId } = useParams()
     const [current,setCurrent] = useState(null)
+    const [showAlert,setShowAlert] = useState(false)
 
     useEffect(() => {
 
@@ -39,6 +40,10 @@ const Product = () => {
 
             if(error) throw new Error(`Error while add item to the cart : ${error}`)
             console.log("Item added to the cart successfully",response)
+            
+            setShowAlert(true)
+
+            setTimeout(()=>{setShowAlert(false)},3000)
         } catch(error) {
             console.error(`Error while adding to the cart ${error.message}`)
         }
@@ -48,6 +53,15 @@ const Product = () => {
 
     return (
         <Container maxWidth={false} sx={{display : "flex",fontFamily : "Raleway"}}>
+            {
+                showAlert && (
+                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
+                        <Alert variant="filled"  severity="success">
+                            Items added to the cart!
+                        </Alert>
+                    </Box>
+                )
+            }
             <Box sx={{width : "50%",height : "100vh",display : "flex",alignItems : "center",justifyContent : "right",paddingRight : "20px"}}>
                 <img src={current.image_url} style={{maxWidth : "700px"}}/>
             </Box>

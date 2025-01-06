@@ -20,3 +20,8 @@ export const totalAtom = atom({
     default : null
 })
 
+export const deleteAtom = atom({
+    key : "deleteAtom",
+    default : false
+})
+

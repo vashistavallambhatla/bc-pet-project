@@ -1,14 +1,13 @@
 import { Container, Typography ,Box ,Button} from "@mui/material"
 import supabase from "../supabase/supabaseClient"
 import { useEffect,useState } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil"
 import { userState } from "../atoms/state/userAtom"
 import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
-import { cartAtom, totalAtom } from "../atoms/state/cartAtom"
+import { cartAtom, deleteAtom, totalAtom } from "../atoms/state/cartAtom"
 import ClipLoader from "react-spinners/ClipLoader";
-import { CircleLoader } from "react-spinners"
 
 const Cart = () => {
     const user = useRecoilValue(userState)
@@ -17,31 +16,37 @@ const Cart = () => {
     const navigate = useNavigate()
     const setCartState = useSetRecoilState(cartAtom)
     const setTotalAtom = useSetRecoilState(totalAtom)
+    const [deleted,setDeleteAtom] = useRecoilState(deleteAtom)
 
     useEffect(()=>{
 
         if(user){
             setLoading(true)
             const fetchCart = async() => {
+                try {
+                    const {data : cartId,error : cartError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
 
-                const {data : cartId,error : cartError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
+                    if(cartError) throw new Error(`Error fetching cartId : ${cartError.message}`)
+                    if(!cartId) throw new Error(`No cart found for user`)
 
-                if(cartError) throw new Error(`Error fetching cartId : ${cartError.message}`)
-                if(!cartId) throw new Error(`No cart found for user`)
+                    const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,products(name,image_url,price)").eq("cart_id",cartId.id)
 
-                const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,products(name,image_url,price)").eq("cart_id",cartId.id)
-
-                if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError.message}`)
-                if(!cartItems || cartItems.length===0) throw new Error(`No cartItems found for user`)
-                
-                setCartState(cartItems)
-                setCart(cartItems)
-            }
-
+                    if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError.message}`)
+                    
+                    setCartState(cartItems)
+                    setCart(cartItems)
+                } catch(error) {
+                    console.error(error)
+                } finally {
+                    setLoading(false)
+                    setDeleteAtom(false)
+                }
+            } 
             fetchCart()
+        } else {
+            setLoading(false)
         }
-        setLoading(false)
-    },[user])
+    },[user,deleted])
 
 
     const totalPrice = cart ? cart.reduce((total, cartItem) => {
@@ -56,12 +61,22 @@ const Cart = () => {
         }
     }, [cart, totalPrice, setTotalAtom]);
     
-    if(loading) return (
-        <div>
-            <CircleLoader/>
-        </div>
-    )
-    if(!cart && !loading) return <div>Empty Cart</div> 
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
+    }
+      
+    if (!cart || cart.length===0) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',flexDirection : "column",alignItems : "center"}}>
+                <Typography variant="h4" sx={{fontWeight : "bold"}}>{"Empty cart :("}</Typography>
+                <img src="src/assets/empty_cart.png"></img>
+            </div>
+        );
+    }
 
     return (
         <Container maxWidth={false} sx={{display : "flex",flexDirection : "column",alignItems : "center",marginTop : "60px"}}>

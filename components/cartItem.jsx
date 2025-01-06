@@ -1,8 +1,11 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Container, Typography,Box, IconButton } from "@mui/material"
 import supabase from '../supabase/supabaseClient';
+import { useSetRecoilState } from 'recoil';
+import { deleteAtom } from '../atoms/state/cartAtom';
 
 const CartItem = ({item}) => {
+    const setDeleteAtom = useSetRecoilState(deleteAtom)
 
     const handleDelete = async(cartItemId) => {
         try {
@@ -11,7 +14,8 @@ const CartItem = ({item}) => {
             if(error) throw new Error(`Error while deleting the cartItem : ${error.message}`)
             
             console.log(`Deleted cart items: `,response)
-            window.location.reload()
+            setDeleteAtom(true)
+            console.log("Here")
         } catch(error){
             console.error(`Error: `,error)
         }

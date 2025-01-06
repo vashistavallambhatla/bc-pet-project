@@ -34,6 +34,7 @@ const BestSellers = () => {
             width: '100%',
             maxWidth: '100vw !important',
             overflowX: 'hidden',
+            justifyContent : "center"
             }}>
             <Box sx={homePageLeftBox}>
                 <Typography variant="h3" sx={homePageHeadings}>Best sellers</Typography>

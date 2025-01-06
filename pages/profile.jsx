@@ -6,6 +6,7 @@ import { useEffect,useState } from "react"
 import supabase from "../supabase/supabaseClient"
 import { white,profilePageCards } from "../src/commonStyles"
 import OrderItem from "../components/orderItems"
+import { CircleLoader,ClipLoader} from "react-spinners"
 
 
 
@@ -18,8 +19,8 @@ const Profile = () => {
 
     useEffect(()=>{
         if(user){
+            setLoading(true)
             const fetchUserDetails = async() => {
-                setLoading(true)
                 const { data : userData, error } = await supabase
                 .from('users')
                 .select('*')
@@ -31,7 +32,6 @@ const Profile = () => {
                     console.log('User found:', userData);
                     setUserDetails(userData)
                 }
-
             }
             
             const fetchOrders = async() => {
@@ -56,17 +56,27 @@ const Profile = () => {
                 } catch (error){
                     throw new Error(error)
                 }
+                finally{
+                    setLoading(false)
+                }
 
-                setLoading(false)
             }
 
             fetchUserDetails()
             fetchOrders()
         }
     },[user])
-    
+
+
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
+    }
+
     if(!user) return <SignIn/>
-    if(loading) return (<div>Loading....</div>)
     
     return (
         <Container maxWidth={false} sx={{width : "100%", display: "flex", flexDirection: "column", alignItems: "center",gap : "3rem"}}>
