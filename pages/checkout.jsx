@@ -15,6 +15,7 @@ import { useRecoilValue } from "recoil";
 import {addressFormAtom, cartAtom, paymentFormAtom, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
+import { useNavigate } from "react-router-dom";
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
@@ -38,6 +39,8 @@ const CheckOut = () => {
     const paymentForm = useRecoilValue(paymentFormAtom)
     const user = useRecoilValue(userState)
     const total = useRecoilValue(totalAtom)
+    const [confirmationShow,setConfirmationShow] = useState(false)
+    const navigate = useNavigate()
 
     const handleOrder = async () => {
       try {
@@ -67,7 +70,13 @@ const CheckOut = () => {
     
         console.log('Order items created successfully:', orderItemsData);
         deleteCartItems()
+        setConfirmationShow(true)
 
+        setTimeout(()=>{
+          navigate("/profile")
+          setConfirmationShow(false)
+        },3000)
+        
       } catch (error) {
         console.error('Error in handleOrder:', error);
       }
@@ -110,7 +119,13 @@ const CheckOut = () => {
         });
     }
 
-    
+    if(confirmationShow) return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',flexDirection : "column",alignItems : "center"}}>
+            <img src="src/assets/confirmation.png"></img>
+            <Typography variant="h4" sx={{fontWeight : "bold"}}>{"Order confirmed :)"}</Typography>
+        </div>
+    )   
+
     return (
         <Container>
             <Stepper
