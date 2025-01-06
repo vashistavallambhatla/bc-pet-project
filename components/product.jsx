@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { userState } from "../atoms/state/userAtom"
 import { useRecoilValue } from "recoil"
 import supabase from "../supabase/supabaseClient"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const Product = () => {
     const user = useRecoilValue(userState)
@@ -14,6 +14,8 @@ const Product = () => {
     const { productId } = useParams()
     const [current,setCurrent] = useState(null)
     const [showAlert,setShowAlert] = useState(false)
+    const navigate = useNavigate()  
+    const [loginAlert,setLoginAlert] = useState(false)                         
 
     useEffect(() => {
 
@@ -31,21 +33,29 @@ const Product = () => {
     },[])
 
     const handleAddToCart = async () => {
-        try{
-            const {data : cartId,error : cartIdError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
-            if(cartIdError) throw new Error(`Error fetching cartId : ${cartIdError.message}`)
-            console.log(cartId)
+        if(!user){
+            setLoginAlert(true)
 
-            const {data : response,error} = await supabase.from("cart_items").insert([{cart_id : cartId.id,product_id : productId,quantity : quantity,weight : size,grind_size : grindSize}])
-
-            if(error) throw new Error(`Error while add item to the cart : ${error}`)
-            console.log("Item added to the cart successfully",response)
-            
-            setShowAlert(true)
-
-            setTimeout(()=>{setShowAlert(false)},3000)
-        } catch(error) {
-            console.error(`Error while adding to the cart ${error.message}`)
+            setTimeout(()=>{
+                setLoginAlert(false)
+            },3000)
+        } else {
+            try{
+                const {data : cartId,error : cartIdError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
+                if(cartIdError) throw new Error(`Error fetching cartId : ${cartIdError.message}`)
+                console.log(cartId)
+    
+                const {data : response,error} = await supabase.from("cart_items").insert([{cart_id : cartId.id,product_id : productId,quantity : quantity,weight : size,grind_size : grindSize}])
+    
+                if(error) throw new Error(`Error while add item to the cart : ${error}`)
+                console.log("Item added to the cart successfully",response)
+                
+                setShowAlert(true)
+    
+                setTimeout(()=>{setShowAlert(false)},3000)
+            } catch(error) {
+                console.error(`Error while adding to the cart ${error.message}`)
+            }
         }
     }
 
@@ -55,9 +65,18 @@ const Product = () => {
         <Container maxWidth={false} sx={{display : "flex",fontFamily : "Raleway"}}>
             {
                 showAlert && (
-                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
+                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width :"600px",zIndex : 1300}}>
                         <Alert variant="filled"  severity="success">
                             Items added to the cart!
+                        </Alert>
+                    </Box>
+                )
+            }
+            {
+                loginAlert && (
+                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
+                        <Alert severity="info">
+                            Login to proceed
                         </Alert>
                     </Box>
                 )
@@ -127,7 +146,10 @@ const Product = () => {
                     </Box>
                     <Box sx={{display : "flex",gap : "3rem"}}>
                         <Button sx={buttonStyles} onClick={()=>{handleAddToCart()}}>Add to cart</Button>
-                        <Button sx={buttonStyles}>Buy now</Button>
+                        <Button sx={buttonStyles} onClick={()=>{
+                            handleAddToCart()
+                            if(user) navigate("/cart")                                
+                        }}>Buy now</Button>
                     </Box>
                 </Box>
             </Box>

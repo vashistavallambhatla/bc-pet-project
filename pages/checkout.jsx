@@ -1,4 +1,4 @@
-import { Container, Box, Typography, Button, TextField } from "@mui/material";
+import { Container, Box, Typography, Button, TextField,Alert } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import AddressForm from "../components/addressForm";
 import PaymentForm from "../components/paymentForm";
@@ -39,8 +39,8 @@ const CheckOut = () => {
     const paymentForm = useRecoilValue(paymentFormAtom)
     const user = useRecoilValue(userState)
     const total = useRecoilValue(totalAtom)
-    const [confirmationShow,setConfirmationShow] = useState(false)
     const navigate = useNavigate()
+    const [showAlert,setShowAlert] = useState(false)
 
     const handleOrder = async () => {
       try {
@@ -70,13 +70,12 @@ const CheckOut = () => {
     
         console.log('Order items created successfully:', orderItemsData);
         deleteCartItems()
-        setConfirmationShow(true)
 
-        setTimeout(()=>{
-          navigate("/profile")
-          setConfirmationShow(false)
-        },3000)
+        setShowAlert(true)
         
+        setTimeout(()=>{
+          setShowAlert(false)
+        },3000)
       } catch (error) {
         console.error('Error in handleOrder:', error);
       }
@@ -117,17 +116,19 @@ const CheckOut = () => {
             localStorage.setItem("activeStep", newStep);
             return newStep;
         });
-    }
-
-    if(confirmationShow) return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',flexDirection : "column",alignItems : "center"}}>
-            <img src="src/assets/confirmation.png"></img>
-            <Typography variant="h4" sx={{fontWeight : "bold"}}>{"Order confirmed :)"}</Typography>
-        </div>
-    )   
+    }  
 
     return (
         <Container>
+          {
+                showAlert && (
+                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
+                        <Alert variant="filled"  severity="success">
+                            {"Order Confirmed :)"}
+                        </Alert>
+                    </Box>
+                )
+            }
             <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}

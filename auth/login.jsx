@@ -2,9 +2,10 @@ import { Button, Container, Typography,TextField,ThemeProvider, colors} from "@m
 import supabase from "../supabase/supabaseClient"
 import { useEffect, useState } from "react"
 import { isFormValid, theme } from "./authHelpers"
-import { buttonStyles,formHeadings,authSwitchBtn,authContainer} from "../src/commonStyles"
+import { buttonStyles,formHeadings,authSwitchBtn,authContainer, coffee} from "../src/commonStyles"
 import {Link,useNavigate} from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
+import { FcGoogle } from "react-icons/fc";
 
 const SignIn = () => {
     const [email,setEmail] = useState("")
@@ -20,8 +21,21 @@ const SignIn = () => {
             alert(response.error.message)
             setError(response.error)
         } else {
-            alert(`User signed In : ${user.id}`)
             navigate("/")
+        }
+    }
+
+    const handleSigninWithGoogle = async() => {
+        try{
+            const {user,error} = await supabase.auth.signInWithOAuth({
+                provider : "google",
+                options : {
+                    redirectTo : "http://localhost:5173/"
+                }
+            })
+            alert("User signed in",user)
+        } catch(error){
+            console.log(`Error logging in with google : ${error}`)
         }
     }
 
@@ -36,6 +50,10 @@ const SignIn = () => {
                 <Button sx={buttonStyles} onClick={handleSignIn}>SignIn</Button>
                 <Typography>Don't have an account? <Link to="/signup" style={authSwitchBtn}> Register here</Link></Typography>
                 <Typography><Link to="/forgotPassword" style={authSwitchBtn}>Forgot password?</Link></Typography>
+                <Button sx={{display : "flex",alignItems : "center",gap : "1rem",pr : "2rem",mt : "1rem"}} >
+                    <FcGoogle style={{ fontSize: '2rem' }}/>
+                    <Typography sx={{color : coffee,fontWeight : "bold",top : "10%",position : "relative"}}>Sign in with google</Typography>
+                </Button>
             </Container>
             </div>
         </ThemeProvider>

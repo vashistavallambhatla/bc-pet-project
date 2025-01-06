@@ -25,3 +25,7 @@ export const deleteAtom = atom({
     default : false
 })
 
+export const orderItemsAtom = atom({
+    key : "orderItemsAtom",
+    default : null
+})

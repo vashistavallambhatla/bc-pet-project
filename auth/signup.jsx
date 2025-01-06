@@ -144,7 +144,7 @@ const SignUp = () => {
 
             <Typography sx={{ mt: 2, textAlign: "center" }}>
               Already have an account?
-              <Link to="/login" style={authSwitchBtn}> Login here</Link>
+              <Link to="/profile" style={authSwitchBtn}> Login here</Link>
             </Typography>
           </form>
         </Container>

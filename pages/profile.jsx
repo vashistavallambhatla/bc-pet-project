@@ -1,112 +1,91 @@
 import { useRecoilValue } from "recoil"
 import SignIn from "../auth/login"
 import { userState } from "../atoms/state/userAtom"
-import { Container, Typography,Box } from "@mui/material"
-import { useEffect,useState } from "react"
+import { Container, Typography, Box } from "@mui/material"
+import { useEffect, useState } from "react"
 import supabase from "../supabase/supabaseClient"
-import { white,profilePageCards } from "../src/commonStyles"
+import { white, profilePageCards } from "../src/commonStyles"
 import OrderItem from "../components/orderItems"
-import { CircleLoader,ClipLoader} from "react-spinners"
-
-
+import { ClipLoader } from "react-spinners"
 
 const Profile = () => {
     const user = useRecoilValue(userState)
-    const [userDetails,setUserDetails] = useState(null)
-    const [loading,setLoading] = useState(false)
-    const [orderItems,setOrderItems] = useState(null)
-    const [shippingAddress,setShippingAddress] = useState(null)
+    const [userDetails, setUserDetails] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [orderItems, setOrderItems] = useState(null)
 
-    useEffect(()=>{
-        if(user){
+    useEffect(() => {
+        if (user) {
             setLoading(true)
-            const fetchUserDetails = async() => {
-                const { data : userData, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-                if (error) {
-                    console.error('Error fetching user by email:', error.message);
-                } else {
-                    console.log('User found:', userData);
-                    setUserDetails(userData)
-                }
-            }
             
-            const fetchOrders = async() => {
+            const fetchData = async () => {
                 try {
-                    const {data : orders,error : ordersError} = await supabase.from("orders").select("*").eq("user_id",user.id)
-                    if(ordersError) throw new Error(`Error while fetching previous orders`,ordersError)
+                    const [userResponse, ordersResponse] = await Promise.all([
+                        supabase
+                            .from('users')
+                            .select('*')
+                            .eq('id', user.id)
+                            .single(),
+                        supabase
+                            .from("orders")
+                            .select(`
+                                *,
+                                order_items(
+                                    quantity,
+                                    products(name, image_url, price)
+                                )
+                            `)
+                            .eq("user_id", user.id)
+                    ]);
 
-                    const ordersWithItems = await Promise.all(
-                        orders.map(async(order) => {
-                            const {data : orderItemsWithProducts,error : orderItemsError} = await supabase.from("order_items").select("quantity,products(name,image_url,price)").eq("order_id",order.order_id)
+                    if (userResponse.error) throw new Error(`Error fetching user: ${userResponse.error.message}`);
+                    if (ordersResponse.error) throw new Error(`Error fetching orders: ${ordersResponse.error.message}`);
 
-                            if(orderItemsError) throw new Error(`Error while fetching orderItems`,orderItemsError)
-                            
-                            return {
-                                ...order,
-                                orderItemsWithProducts
-                            }
-                        })
-                    )
-                    if(!ordersWithItems || ordersWithItems.length===0) throw new Error('No orders with items')
-                    setOrderItems(ordersWithItems)
-                } catch (error){
-                    throw new Error(error)
+                    setUserDetails(userResponse.data);
+                    setOrderItems(ordersResponse.data);
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setLoading(false);
                 }
-                finally{
-                    setLoading(false)
-                }
+            };
 
-            }
-
-            fetchUserDetails()
-            fetchOrders()
+            fetchData();
         }
-    },[user])
-
+    },[user]);
 
     if (loading) {
         return (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <ClipLoader />
-          </div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <ClipLoader />
+            </div>
         );
     }
 
-    if(!user) return <SignIn/>
-    
+    if (!user) return <SignIn />
+
     return (
-        <Container maxWidth={false} sx={{width : "100%", display: "flex", flexDirection: "column", alignItems: "center",gap : "3rem"}}>
+        <Container maxWidth={false} sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "3rem" }}>
             <Box sx={profilePageCards}>
-                <Typography variant="h6" sx={{fontWeight : "bold"}}>Profile</Typography>
-                <Typography>{userDetails?.first_name+" "+userDetails?.last_name}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>Profile</Typography>
+                <Typography>{userDetails?.first_name + " " + userDetails?.last_name}</Typography>
             </Box>
             <Box sx={profilePageCards}>
-                <Typography variant="h6" sx={{fontWeight : "bold"}}>Orders</Typography>
-                {
-                    !orderItems &&
-                    <Typography>You have no orders yet</Typography>
-                }
-                {
-                    orderItems && 
-                    <Box sx={{textTransform : "uppercase",maxWidth : "500px",textAlign : "center",borderRadius : "10px",padding : "10px",backgroundColor : white,boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",marginTop : "10px"}}>
-                    {
-                        orderItems && orderItems.map((orderItem) => (
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>Orders</Typography>
+                {!orderItems && <Typography>You have no orders yet</Typography>}
+                {orderItems && orderItems.length > 0 && (
+                    <Box sx={{textTransform: "uppercase",maxWidth: "500px",textAlign: "center",borderRadius: "10px",padding: "10px",backgroundColor: white,boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",marginTop: "10px"
+                    }}>
+                        {orderItems.map((orderItem) => (
                             <Box key={orderItem.order_id}>
-                                {
-                                    orderItem.orderItemsWithProducts.length > 0 &&
-                                    orderItem.orderItemsWithProducts.map((item) => (
-                                        <OrderItem item={item}/>
-                                    ))
-                                }                
+                                {orderItem.order_items.map((item) => (
+                                    <OrderItem key={item.id} item={item} />
+                                ))}
                             </Box>
-                        ))
-                    }
+                        ))}
                     </Box>
-                }
+                )}
             </Box>
         </Container>
     )
