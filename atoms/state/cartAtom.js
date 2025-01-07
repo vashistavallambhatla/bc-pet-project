@@ -5,6 +5,11 @@ export const cartAtom = atom({
     default : null
 })
 
+export const cart = atom({
+    key : "cart",
+    default : null
+})
+
 export const paymentFormAtom = atom({
     key : "paymentForm",
     default : {}

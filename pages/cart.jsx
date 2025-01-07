@@ -8,9 +8,11 @@ import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
 import { cartAtom, deleteAtom, totalAtom } from "../atoms/state/cartAtom"
 import ClipLoader from "react-spinners/ClipLoader";
+import { cart } from "../atoms/state/cartAtom"
 
 const Cart = () => {
     const user = useRecoilValue(userState)
+    /*const [cart,setCart] = useRecoilState(cart)*/
     const [cart,setCart] = useState(null)
     const [loading,setLoading] = useState(true)
     const navigate = useNavigate()

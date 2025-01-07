@@ -5,7 +5,7 @@ export const userState = atom({
     default : null
 })
 
-export const useDetails = atom({
-    key : "userState",
+export const userDetailsAtom = atom({
+    key : "userDetailsAtom",
     default : null
 })

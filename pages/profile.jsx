@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue,useRecoilState } from "recoil"
 import SignIn from "../auth/login"
 import { userState } from "../atoms/state/userAtom"
 import { Container, Typography, Box } from "@mui/material"
@@ -7,26 +7,30 @@ import supabase from "../supabase/supabaseClient"
 import { white, profilePageCards } from "../src/commonStyles"
 import OrderItem from "../components/orderItems"
 import { ClipLoader } from "react-spinners"
+import { orderItemsAtom } from "../atoms/state/cartAtom"
+import { userDetailsAtom } from "../atoms/state/userAtom"
 
 const Profile = () => {
     const user = useRecoilValue(userState)
-    const [userDetails, setUserDetails] = useState(null)
+    const [userDetails, setUserDetails] = useRecoilState(userDetailsAtom)
+    const [orderItems, setOrderItems] = useRecoilState(orderItemsAtom)
     const [loading, setLoading] = useState(false)
-    const [orderItems, setOrderItems] = useState(null)
 
     useEffect(() => {
-        if (user) {
-            setLoading(true)
-            
-            const fetchData = async () => {
+        const fetchData = async () => {
+            if (user && (!userDetails || !orderItems)) {
+                setLoading(true)
                 try {
+                    console.log("here")
                     const [userResponse, ordersResponse] = await Promise.all([
-                        supabase
+                        
+                        !userDetails ? supabase
                             .from('users')
                             .select('*')
                             .eq('id', user.id)
-                            .single(),
-                        supabase
+                            .single() : Promise.resolve({ data: userDetails }),
+            
+                        !orderItems ? supabase
                             .from("orders")
                             .select(`
                                 *,
@@ -35,25 +39,24 @@ const Profile = () => {
                                     products(name, image_url, price)
                                 )
                             `)
-                            .eq("user_id", user.id)
+                            .eq("user_id", user.id) : Promise.resolve({ data: orderItems })
                     ]);
 
                     if (userResponse.error) throw new Error(`Error fetching user: ${userResponse.error.message}`);
                     if (ordersResponse.error) throw new Error(`Error fetching orders: ${ordersResponse.error.message}`);
 
-                    setUserDetails(userResponse.data);
-                    setOrderItems(ordersResponse.data);
-
+                    if (!userDetails) setUserDetails(userResponse.data);
+                    if (!orderItems) setOrderItems(ordersResponse.data);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally {
                     setLoading(false);
                 }
-            };
+            }
+        };
 
-            fetchData();
-        }
-    },[user]);
+        fetchData();
+    }, [user, userDetails, orderItems, setUserDetails, setOrderItems]);
 
     if (loading) {
         return (
