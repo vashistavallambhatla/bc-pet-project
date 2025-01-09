@@ -1,7 +1,7 @@
 import { useRecoilValue,useRecoilState } from "recoil"
 import SignIn from "../auth/login"
 import { userState } from "../atoms/state/userAtom"
-import { Container, Typography, Box } from "@mui/material"
+import { Container, Typography, Box,Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import supabase from "../supabase/supabaseClient"
 import { white, profilePageCards } from "../src/commonStyles"
@@ -9,12 +9,16 @@ import OrderItem from "../components/orderItems"
 import { ClipLoader } from "react-spinners"
 import { orderItemsAtom } from "../atoms/state/cartAtom"
 import { userDetailsAtom } from "../atoms/state/userAtom"
+import { coffee } from "../src/commonStyles"
+
+const buttonStyle = {backgroundColor: coffee,color: "white",width: "70%",borderTopRightRadius: "20px",borderBottomLeftRadius: "20px",marginBottom : "20px",padding : "10px 40px"}
 
 const Profile = () => {
     const user = useRecoilValue(userState)
     const [userDetails, setUserDetails] = useRecoilState(userDetailsAtom)
     const [orderItems, setOrderItems] = useRecoilState(orderItemsAtom)
     const [loading, setLoading] = useState(false)
+    const [updateAddress,setUpdateAddress] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,13 +74,31 @@ const Profile = () => {
 
     return (
         <Container maxWidth={false} sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "3rem" }}>
-            <Box sx={profilePageCards}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>Profile</Typography>
-                <Typography>{userDetails?.first_name + " " + userDetails?.last_name}</Typography>
-            </Box>
+            {
+                !updateAddress && (
+                    <Box sx={profilePageCards}>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>Profile</Typography>
+                        <Typography>{userDetails?.first_name + " " + userDetails?.last_name}</Typography>
+                        <Typography>{userDetails?.email}</Typography>
+                        <Typography>{userDetails?.phone_number}</Typography>
+                        <Typography>{userDetails?.address ? userDetails?.address : "No address"}</Typography>
+                        <Button sx={buttonStyle}
+                        onClick={() => {setUpdateAddress(true)}}
+                        >Update profile</Button>
+                    </Box>
+                )
+            }
+            {
+                updateAddress && (
+                    <Box sx={profilePageCards}>
+                        <Button sx={buttonStyle}
+                        onClick={() => {setUpdateAddress(false)}}>Update</Button>
+                    </Box>
+                )
+            }
             <Box sx={profilePageCards}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>Orders</Typography>
-                {!orderItems && <Typography>You have no orders yet</Typography>}
+                {(!orderItems || orderItems.length===0) && <Typography>You have no orders yet</Typography>}
                 {orderItems && orderItems.length > 0 && (
                     <Box sx={{textTransform: "uppercase",maxWidth: "500px",textAlign: "center",borderRadius: "10px",padding: "10px",backgroundColor: white,boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",marginTop: "10px"
                     }}>

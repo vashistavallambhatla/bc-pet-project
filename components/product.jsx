@@ -15,7 +15,8 @@ const Product = () => {
     const [current,setCurrent] = useState(null)
     const [showAlert,setShowAlert] = useState(false)
     const navigate = useNavigate()  
-    const [loginAlert,setLoginAlert] = useState(false)                         
+    const [loginAlert,setLoginAlert] = useState(false)  
+    const [price,setPrice] = useState(null)                       
 
     useEffect(() => {
 
@@ -27,6 +28,7 @@ const Product = () => {
             
             console.log(response)
             setCurrent(response)
+            setPrice(response.price)
         }
 
         getProduct()
@@ -142,7 +144,7 @@ const Product = () => {
                         </FormControl>
                     </Box>
                     <Box>
-                        <Typography variant="h5" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>Price : {size === 250 ? current.price : current.price*2}</Typography>
+                        <Typography variant="h5" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>Price : {size===250 ? price :price * 2}</Typography>
                     </Box>
                     <Box sx={{display : "flex",gap : "3rem"}}>
                         <Button sx={buttonStyles} onClick={()=>{handleAddToCart()}}>Add to cart</Button>

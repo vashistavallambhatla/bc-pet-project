@@ -5,8 +5,13 @@ export const cartAtom = atom({
     default : null
 })
 
-export const cart = atom({
-    key : "cart",
+export const cartId = atom({
+    key : "cartId",
+    default : null
+})
+
+export const cartu = atom({
+    key : "cartu",
     default : null
 })
 
@@ -32,5 +37,25 @@ export const deleteAtom = atom({
 
 export const orderItemsAtom = atom({
     key : "orderItemsAtom",
+    default : null
+})
+
+export const newAddressOpen = atom({
+    key : "newAddressOpen",
+    default : true
+})
+
+export const newPaymentCardOpen = atom({
+    key : "newPaymentCard",
+    default : false
+})
+
+export const selectedAddressAtom = atom({
+    key : "selectedAddressAtom",
+    default : null
+})
+
+export const selectedCardAtom = atom({
+    key : "selectedCardAtom",
     default : null
 })

@@ -11,11 +11,12 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
-import { useRecoilValue } from "recoil";
-import {addressFormAtom, cartAtom, paymentFormAtom, totalAtom} from "../atoms/state/cartAtom.js"
+import { useRecoilValue,useRecoilState } from "recoil";
+import {addressFormAtom, cartAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
+import { validateAddress,isPaymentFormValid} from "../utils/helperFunctions.js";
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
@@ -41,6 +42,8 @@ const CheckOut = () => {
     const total = useRecoilValue(totalAtom)
     const navigate = useNavigate()
     const [showAlert,setShowAlert] = useState(false)
+    const [newAddress,setNewAddress] = useRecoilState(newAddressOpen)
+    const [newCard,setNewCard] = useRecoilState(newPaymentCardOpen)
 
     const handleOrder = async () => {
       try {
@@ -99,23 +102,47 @@ const CheckOut = () => {
     }
     
     const handleNext = () => {
-      if(activeStep === steps.length - 1) {
-        
+      if(activeStep === 0){
+        if(validateAddress(addressForm)){
+          setActiveStep(currentStep => currentStep+1)
+        } else alert("Fill in all the fields")
+      } else if(activeStep === 1){
+        if(isPaymentFormValid(paymentForm)){
+          setActiveStep(currentStep => currentStep+1)
+        } else alert("Invalid details")
+      }
+      else if(activeStep === steps.length - 1) {
         handleOrder();
     } else {
         setActiveStep(currentStep => {
             const newStep = currentStep + 1;
             localStorage.setItem("activeStep", newStep);
             return newStep;
-        });
+    });
     }
     }
     const handlePrev = () => {
-        setActiveStep(currentStep => {
+        if(activeStep === 0){
+          if(newAddress === false){
+            navigate("/checkout")
+            setNewAddress(true)
+          }
+          else navigate("/cart")
+        } else if(activeStep === 1){
+          if(newCard === true){
+            navigate("/checkout")
+            setNewCard(false)
+          } else {
+            setActiveStep(currentStep => currentStep - 1)
+          }
+        }
+        else {
+          setActiveStep(currentStep => {
             const newStep = currentStep - 1;
             localStorage.setItem("activeStep", newStep);
             return newStep;
         });
+        }
     }  
 
     return (
@@ -156,13 +183,11 @@ const CheckOut = () => {
                       pb: { xs: 12, sm: 0 },
                       mt: { xs: 2, sm: 0 },
                       mb: '60px',
+                      justifyContent : "space-between"
                     },
-                    activeStep !== 0
-                      ? { justifyContent: 'space-between' }
-                      : { justifyContent: 'flex-end' },
                   ]}
                 >
-                  {activeStep !== 0 && (
+                  
                     <Button
                       startIcon={<ChevronLeftRoundedIcon />}
                       onClick={handlePrev}
@@ -171,7 +196,7 @@ const CheckOut = () => {
                     >
                       Previous
                     </Button>
-                  )}
+                 
                   {activeStep !== 0 && (
                     <Button
                       startIcon={<ChevronLeftRoundedIcon />}

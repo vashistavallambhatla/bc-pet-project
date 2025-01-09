@@ -6,13 +6,12 @@ import { userState } from "../atoms/state/userAtom"
 import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
-import { cartAtom, deleteAtom, totalAtom } from "../atoms/state/cartAtom"
+import { cartAtom, deleteAtom, totalAtom, cartu, cartId } from "../atoms/state/cartAtom"
 import ClipLoader from "react-spinners/ClipLoader";
-import { cart } from "../atoms/state/cartAtom"
 
 const Cart = () => {
     const user = useRecoilValue(userState)
-    /*const [cart,setCart] = useRecoilState(cart)*/
+    /*const [cart,setCart] = useRecoilState(cartAtom)*/
     const [cart,setCart] = useState(null)
     const [loading,setLoading] = useState(true)
     const navigate = useNavigate()
@@ -21,6 +20,45 @@ const Cart = () => {
     const [deleted,setDeleteAtom] = useRecoilState(deleteAtom)
 
     useEffect(()=>{
+
+        const fetch = async() => {
+            if(!user){
+                setLoading(false)
+                return
+            }
+
+            if(!cart || deleted){
+                setLoading(true)
+                try{
+                    const { data: cartData, error: cartError } = await supabase
+                        .from("cart")
+                        .select("id")
+                        .eq("user_id", user.id)
+                        .single()
+
+                    if (cartError) throw new Error(`Error fetching cart: ${cartError.message}`)
+                    if (!cartData) throw new Error(`No cart found for user`)
+
+                    const { data: cartItems, error: cartItemsError } = await supabase
+                        .from("cart_items")
+                        .select("id, product_id, quantity, weight, products(name, image_url, price)")
+                        .eq("cart_id", cartData.id)
+
+                    if (cartItemsError) throw new Error(`Error fetching cart items: ${cartItemsError.message}`)
+                    
+                    setCart(cartItems)
+                    setDeleteAtom(false)
+                } catch(error) {
+                    console.error(error)
+                } finally {
+                    setLoading(false)
+                }
+            } else {
+                setLoading(false)
+            }
+        }
+
+        /*fetch()*/
 
         if(user){
             setLoading(true)
@@ -44,6 +82,7 @@ const Cart = () => {
                     setDeleteAtom(false)
                 }
             } 
+            
             fetchCart()
         } else {
             setLoading(false)
@@ -52,7 +91,7 @@ const Cart = () => {
 
 
     const totalPrice = cart ? cart.reduce((total, cartItem) => {
-        const price = cartItem.products.price;
+        const price = cartItem.products.price * (cartItem.weight / 250);
         const quantity = cartItem.quantity;
         return total + price * quantity;
     }, 0) : 0;
