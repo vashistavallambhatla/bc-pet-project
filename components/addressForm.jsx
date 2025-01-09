@@ -219,7 +219,7 @@ const AddressForm = () => {
                 onChange={()=>{setSave(prev => !prev)}}
                 />
             }
-            label={<Typography>Save this address</Typography>}
+            label={<Typography>Save this address for future orders</Typography>}
             sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
         />
         </>

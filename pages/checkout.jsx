@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue,useRecoilState } from "recoil";
-import {addressFormAtom, cartAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, totalAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +44,8 @@ const CheckOut = () => {
     const [showAlert,setShowAlert] = useState(false)
     const [newAddress,setNewAddress] = useRecoilState(newAddressOpen)
     const [newCard,setNewCard] = useRecoilState(newPaymentCardOpen)
+    const [saveAddress,setSaveAddress] = useRecoilState(saveShippingAddress)
+    const [saveCard,setSaveCard] = useRecoilState(saveBillingAddress)
 
     const handleOrder = async () => {
       try {
@@ -74,14 +76,54 @@ const CheckOut = () => {
         console.log('Order items created successfully:', orderItemsData);
         deleteCartItems()
 
+        const saveShippingDetails = async() => {
+          try{
+            const {error} = await supabase.from("shipping_address").insert({
+              user_id : user.id,
+              first_name : addressForm.firstName,
+              last_name : addressForm.lastName,
+              address_line1 : addressForm.addressLine1,
+              address_line2 : addressForm.addressLine2,
+              city : addressForm.city,
+              state : addressForm.state,
+              country : addressForm.country,
+              zip_code : addressForm.zipCode
+            })
+  
+            if(error) throw new Error(`Error while saving the shipping address`,error.message)
+            console.log('Shipping address saved successfully')
+          } catch(error){
+              console.error(error)
+          }
+        }
+
+        const saveBillingDetails = async() => {
+          try{
+            const {error} = await supabase.from("billing_address").insert({
+              user_id : user.id,
+              card_number : paymentForm.cardNumber,
+              cvv : paymentForm.cvv,
+              expiry_date : paymentForm.expirationDate
+            })
+            if(error) throw new Error(`Error while saving the billing address`,error.message)
+            console.log('Billing address saved successfully')
+          } catch(error) {
+            console.error(error)
+          }
+        }
+
+        if(saveShippingAddress && addressForm) saveShippingDetails()
+        if(saveCard && paymentForm) saveBillingDetails()
+
         setShowAlert(true)
         
         setTimeout(()=>{
           setShowAlert(false)
         },3000)
+        navigate("/cart")
       } catch (error) {
         console.error('Error in handleOrder:', error);
-      }
+      } 
     };
 
     const deleteCartItems = async() => {

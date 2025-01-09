@@ -2,7 +2,7 @@ import { Container,Box,TextField,Button, FormControlLabel,Typography,Checkbox } 
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import Grid from '@mui/material/Grid2';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { addressFormAtom, cartAtom, newPaymentCardOpen, paymentFormAtom, selectedCardAtom } from "../atoms/state/cartAtom";
+import { addressFormAtom, cartAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, selectedCardAtom } from "../atoms/state/cartAtom";
 import { useEffect,useState } from "react";
 import { userState } from "../atoms/state/userAtom";
 import supabase from "../supabase/supabaseClient";
@@ -15,6 +15,7 @@ const PaymentForm = () => {
     const [addNewCard,setAddNewCard] = useRecoilState(newPaymentCardOpen)
     const [cards,setCards] = useState(null)
     const [selectedCard,setSelectedCard] = useRecoilState(selectedCardAtom)
+    const [save,setSave] = useRecoilState(saveBillingAddress)
 
     const handleChange = (e) => {
         const {name,value} = e.target;
@@ -111,6 +112,7 @@ const PaymentForm = () => {
     )
 
     return (
+        <>
         <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
             <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
                 <CreditCardIcon sx={{fontSize : 60,mb : 2}}></CreditCardIcon>
@@ -166,6 +168,17 @@ const PaymentForm = () => {
                 </Grid>
             </Box>
         </Container>
+        <FormControlLabel
+            control={
+                <Checkbox
+                checked={save}
+                onChange={()=>{setSave(prev => !prev)}}
+                />
+            }
+            label={<Typography>Save this card for future orders</Typography>}
+            sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
+        />
+        </>
     )
 }
 
