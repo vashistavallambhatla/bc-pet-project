@@ -2,7 +2,7 @@ import { Container, Box, Typography, Button, TextField, FormControlLabel,Checkbo
 import Grid from '@mui/material/Grid2';
 import { useState,useEffect } from "react";
 import { useRecoilValue,useRecoilState } from "recoil";
-import { addressFormAtom,newAddressOpen, selectedAddressAtom } from "../atoms/state/cartAtom";
+import { addressFormAtom,newAddressOpen, saveShippingAddress, selectedAddressAtom } from "../atoms/state/cartAtom";
 import { useNavigate } from "react-router-dom";
 import { cartAtom } from "../atoms/state/cartAtom";
 import { userState } from "../atoms/state/userAtom";
@@ -19,6 +19,7 @@ const AddressForm = () => {
     const [loading,setLoading] = useState(false)
     const [shippingAddresses,setShippingAddresses] = useState(null)
     const [selectedAddress,setSelectedAddress] = useRecoilState(selectedAddressAtom)
+    const [save,setSave] = useRecoilState(saveShippingAddress)
 
     const handleChange = (e) => {
         const {name,value} = e.target;
@@ -123,6 +124,7 @@ const AddressForm = () => {
     
 
     return (
+        <>
         <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
             <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
                 <Typography variant="h4" gutterBottom>
@@ -210,6 +212,17 @@ const AddressForm = () => {
                 </Grid>
             </Box>
         </Container>
+        <FormControlLabel
+            control={
+                <Checkbox
+                checked={save}
+                onChange={()=>{setSave(prev => !prev)}}
+                />
+            }
+            label={<Typography>Save this address</Typography>}
+            sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
+        />
+        </>
     );
 }
 

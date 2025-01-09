@@ -25,13 +25,12 @@ const buttonStyle = {
 
 const orderBoxStyle = {
     textTransform: "uppercase",
-    maxWidth: "500px",
+    width: "500px",
     textAlign: "center",
     borderRadius: "10px",
     padding: "20px",
     backgroundColor: white,
     boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",
-    marginTop: "20px"
 }
 
 const Profile = () => {

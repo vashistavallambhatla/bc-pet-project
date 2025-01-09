@@ -1,10 +1,13 @@
 import {Container,Box,Typography,Button,FormControl,InputLabel,Select,MenuItem, Alert} from "@mui/material"
-import { buttonStyles } from "../src/commonStyles"
+import { buttonStyles, coffee } from "../src/commonStyles"
 import { useEffect, useState } from "react"
 import { userState } from "../atoms/state/userAtom"
 import { useRecoilValue } from "recoil"
 import supabase from "../supabase/supabaseClient"
 import { useNavigate, useParams } from "react-router-dom"
+import { ToastContainer, toast } from 'react-toastify';
+import React from 'react'
+import 'react-toastify/dist/ReactToastify.css';
 
 const Product = () => {
     const user = useRecoilValue(userState)
@@ -16,7 +19,35 @@ const Product = () => {
     const [showAlert,setShowAlert] = useState(false)
     const navigate = useNavigate()  
     const [loginAlert,setLoginAlert] = useState(false)  
-    const [price,setPrice] = useState(null)                       
+    const [price,setPrice] = useState(null)       
+    
+    React.useEffect(() => {
+        if (showAlert) {
+          toast.success('Items added to the cart!', {
+            position: "top-right",  
+            top : "60px",
+            backgroundColor : coffee,
+            autoClose: 5000,         
+            hideProgressBar: true,  
+            closeOnClick: true,      
+            pauseOnHover: true,      
+            draggable: true,    
+            progress: undefined,   
+          });
+        }
+    
+        if (loginAlert) {
+          toast.info('Login to proceed', {
+            position: "top-right",  
+            autoClose: 5000,       
+            hideProgressBar: true,  
+            closeOnClick: true,      
+            pauseOnHover: true,    
+            draggable: true,   
+            progress: undefined,  
+          });
+        }
+      }, [showAlert, loginAlert]);
 
     useEffect(() => {
 
@@ -64,25 +95,9 @@ const Product = () => {
     if(!current) return <div></div>
 
     return (
+        <>
+        <ToastContainer/>
         <Container maxWidth={false} sx={{display : "flex",fontFamily : "Raleway"}}>
-            {
-                showAlert && (
-                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width :"600px",zIndex : 1300}}>
-                        <Alert variant="filled"  severity="success">
-                            Items added to the cart!
-                        </Alert>
-                    </Box>
-                )
-            }
-            {
-                loginAlert && (
-                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
-                        <Alert severity="info">
-                            Login to proceed
-                        </Alert>
-                    </Box>
-                )
-            }
             <Box sx={{width : "50%",height : "100vh",display : "flex",alignItems : "center",justifyContent : "right",paddingRight : "20px"}}>
                 <img src={current.image_url} style={{maxWidth : "700px"}}/>
             </Box>
@@ -156,6 +171,7 @@ const Product = () => {
                 </Box>
             </Box>
         </Container>
+        </>
     )
 }
 

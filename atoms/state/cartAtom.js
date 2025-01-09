@@ -59,3 +59,12 @@ export const selectedCardAtom = atom({
     key : "selectedCardAtom",
     default : null
 })
+
+export const saveShippingAddress = atom({
+    key : "saveShippingAddress",
+    default : false
+})
+export const saveBillingAddress = atom({
+    key : "saveBillingAddress",
+    default : false
+})

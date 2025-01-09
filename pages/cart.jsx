@@ -20,46 +20,6 @@ const Cart = () => {
     const [deleted,setDeleteAtom] = useRecoilState(deleteAtom)
 
     useEffect(()=>{
-
-        const fetch = async() => {
-            if(!user){
-                setLoading(false)
-                return
-            }
-
-            if(!cart || deleted){
-                setLoading(true)
-                try{
-                    const { data: cartData, error: cartError } = await supabase
-                        .from("cart")
-                        .select("id")
-                        .eq("user_id", user.id)
-                        .single()
-
-                    if (cartError) throw new Error(`Error fetching cart: ${cartError.message}`)
-                    if (!cartData) throw new Error(`No cart found for user`)
-
-                    const { data: cartItems, error: cartItemsError } = await supabase
-                        .from("cart_items")
-                        .select("id, product_id, quantity, weight, products(name, image_url, price)")
-                        .eq("cart_id", cartData.id)
-
-                    if (cartItemsError) throw new Error(`Error fetching cart items: ${cartItemsError.message}`)
-                    
-                    setCart(cartItems)
-                    setDeleteAtom(false)
-                } catch(error) {
-                    console.error(error)
-                } finally {
-                    setLoading(false)
-                }
-            } else {
-                setLoading(false)
-            }
-        }
-
-        /*fetch()*/
-
         if(user){
             setLoading(true)
             const fetchCart = async() => {
