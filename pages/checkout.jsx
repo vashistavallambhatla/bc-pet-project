@@ -112,10 +112,10 @@ const CheckOut = () => {
           }
         }
 
-        if(saveAddress && addressForm) saveShippingDetails()
-        if(saveCard && paymentForm) saveBillingDetails()
+        if(saveAddress && addressForm) await saveShippingDetails()
+        if(saveCard && paymentForm) await saveBillingDetails()
 
-        deleteCartItems()
+        await deleteCartItems()
 
         setShowAlert(true)
         
@@ -126,6 +126,7 @@ const CheckOut = () => {
         sessionStorage.removeItem("shippingAddress")
         sessionStorage.removeItem("billingAddress")
         
+        window.location.reload("/cart")
       } catch (error) {
         console.error('Error in handleOrder:', error);
       } 
