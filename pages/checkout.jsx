@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue,useRecoilState } from "recoil";
-import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +44,7 @@ const CheckOut = () => {
     const [showAlert,setShowAlert] = useState(false)
     const [saveCard,setSaveCard] = useRecoilState(saveBillingAddress)
     const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
+    const [newCard,setNewCard] = useRecoilState(newCardAtom)
 
     const handleOrder = async () => {
       try {
@@ -151,7 +152,7 @@ const CheckOut = () => {
         if(isPaymentFormValid(paymentForm)){
           setActiveStep(currentStep => currentStep+1)
           console.log(JSON.stringify(paymentForm))
-          sessionStorage.setItem("billingAddress",JSON.stringify(paymentForm))
+          if(newCard) sessionStorage.setItem("billingAddress",JSON.stringify(newCard))
         } else alert("Invalid details")
       }
       else if(activeStep === steps.length - 1) {

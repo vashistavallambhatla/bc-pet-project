@@ -62,6 +62,7 @@ const AddressForm = () => {
 
         if(sessionAddress){
             setNewAddress(JSON.parse(sessionAddress))
+            
         }
 
         const getShippingAddress = async ()=> {

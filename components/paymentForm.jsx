@@ -22,14 +22,14 @@ const PaymentForm = () => {
 
     const handleChange = (e) => {
         const {name,value} = e.target;
-        setPaymentForm((prev) => ({...prev,[name] : value}))
         setNewCard((prev) => ({...prev,[name] :value}))
     }
     
     const handleSelection = (card) => {
+
         if(selectedCard === card.id.toString()){
             setSelectedCard(null)
-            setPaymentForm(null)
+            setPaymentForm({})
             return
         }
         setSelectedCard(card.id.toString())
@@ -51,8 +51,7 @@ const PaymentForm = () => {
     useEffect(()=>{
         const sessionAddress = sessionStorage.getItem("billingAddress")
         if(sessionAddress){
-            setPaymentForm(JSON.parse(sessionAddress))
-            setAddNewCard(true)
+            setNewCard(JSON.parse(sessionAddress))
         }
         const getCards = async () =>  {
             if(user){
@@ -97,6 +96,7 @@ const PaymentForm = () => {
                                 <Checkbox
                                     checked={selectedCard === card.id.toString()}
                                     onChange={() => {
+                                        handleSelection(card)
                                         setUse(false)
                                     }}
                                 />
@@ -117,13 +117,13 @@ const PaymentForm = () => {
             }
             <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}} 
             onClick={()=>{
-                setAddNewCard(prev => !prev)
+                setOpen(prev => !prev)
             }}>
                 {!open ? "+ Add New Card" : "collapse"}
             </Button>
         </Container>
         {
-            open &&
+            open  &&
             <>
             <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
                 <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
@@ -188,6 +188,8 @@ const PaymentForm = () => {
                     onChange={()=>{
                         setUse(prev => !prev)
                         setSelectedCard(null)
+                        if(use) setPaymentForm({})
+                        else setPaymentForm(newCard)
                     }}
                     />
                 }
