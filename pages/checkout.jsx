@@ -44,8 +44,8 @@ const CheckOut = () => {
     const [showAlert,setShowAlert] = useState(false)
     const saveCard= useRecoilValue(saveBillingAddress)
     const saveAddress = useRecoilValue(saveShippingAddress)
-    const newAddress = useRecoilValue(newAddressAtom)
-    const newCard = useRecoilValue(newCardAtom)
+    const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
+    const [newCard,setNewCard] = useRecoilState(newCardAtom)
 
     const handleOrder = async () => {
       try {
@@ -74,7 +74,6 @@ const CheckOut = () => {
         if (!orderItemsData || orderItemsData.length === 0) throw new Error('No order items created');
     
         console.log('Order items created successfully:', orderItemsData);
-        deleteCartItems()
 
         const saveShippingDetails = async() => {
           try{
@@ -103,7 +102,8 @@ const CheckOut = () => {
               user_id : user.id,
               card_number : paymentForm.cardNumber,
               cvv : paymentForm.cvv,
-              expiry_date : paymentForm.expirationDate
+              expiry_date : paymentForm.expirationDate,
+              card_name : paymentForm.name
             })
             if(error) throw new Error(`Error while saving the billing address`,error.message)
             console.log('Billing address saved successfully')
@@ -115,12 +115,17 @@ const CheckOut = () => {
         if(saveAddress && addressForm) saveShippingDetails()
         if(saveCard && paymentForm) saveBillingDetails()
 
+        deleteCartItems()
+
         setShowAlert(true)
         
         setTimeout(()=>{
           setShowAlert(false)
         },3000)
-        navigate("/cart")
+
+        sessionStorage.removeItem("shippingAddress")
+        sessionStorage.removeItem("billingAddress")
+        
       } catch (error) {
         console.error('Error in handleOrder:', error);
       } 
@@ -128,7 +133,6 @@ const CheckOut = () => {
 
     const deleteCartItems = async() => {
       try {
-
         const {data : cartId,error : cartIdError} = await supabase.from("cart").select("id").eq("user_id",user.id).single()
 
         if(cartIdError) throw new Error(`Error while fetching cartId`,cartIdError)
@@ -165,8 +169,6 @@ const CheckOut = () => {
       }
       else if(activeStep === steps.length - 1) {
         handleOrder();
-        sessionStorage.removeItem("shippingAddress")
-        sessionStorage.removeItem("billingAddress")
       } 
     }
 
