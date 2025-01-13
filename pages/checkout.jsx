@@ -42,9 +42,10 @@ const CheckOut = () => {
     const total = useRecoilValue(totalAtom)
     const navigate = useNavigate()
     const [showAlert,setShowAlert] = useState(false)
-    const [saveCard,setSaveCard] = useRecoilState(saveBillingAddress)
-    const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
-    const [newCard,setNewCard] = useRecoilState(newCardAtom)
+    const saveCard= useRecoilValue(saveBillingAddress)
+    const saveAddress = useRecoilValue(saveShippingAddress)
+    const newAddress = useRecoilValue(newAddressAtom)
+    const newCard = useRecoilValue(newCardAtom)
 
     const handleOrder = async () => {
       try {
@@ -111,7 +112,7 @@ const CheckOut = () => {
           }
         }
 
-        if(saveShippingAddress && addressForm) saveShippingDetails()
+        if(saveAddress && addressForm) saveShippingDetails()
         if(saveCard && paymentForm) saveBillingDetails()
 
         setShowAlert(true)
@@ -123,7 +124,7 @@ const CheckOut = () => {
       } catch (error) {
         console.error('Error in handleOrder:', error);
       } 
-    };
+    }
 
     const deleteCartItems = async() => {
       try {
@@ -144,30 +145,31 @@ const CheckOut = () => {
     
     const handleNext = () => {
       if(activeStep === 0){
+
         if(validateAddress(addressForm)){
           setActiveStep(currentStep => currentStep+1)
           if(newAddress) sessionStorage.setItem("shippingAddress",JSON.stringify(newAddress))
-        } else alert("Fill in all the fields")
+        } 
+        else alert("Fill in all the fields")
+
       } else if(activeStep === 1){
+
         if(isPaymentFormValid(paymentForm)){
           setActiveStep(currentStep => currentStep+1)
           console.log(JSON.stringify(paymentForm))
           console.log()
           if(newCard) sessionStorage.setItem("billingAddress",JSON.stringify(newCard))
-        } else alert("Invalid details")
+        } 
+        else alert("Invalid details")
+
       }
       else if(activeStep === steps.length - 1) {
         handleOrder();
         sessionStorage.removeItem("shippingAddress")
         sessionStorage.removeItem("billingAddress")
-    } else {
-        setActiveStep(currentStep => {
-            const newStep = currentStep + 1;
-            localStorage.setItem("activeStep", newStep);
-            return newStep;
-    });
+      } 
     }
-    }
+
     const handlePrev = () => {
         if(activeStep === 0){
           navigate("/cart")
