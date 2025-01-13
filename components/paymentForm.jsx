@@ -1,8 +1,8 @@
 import { Container,Box,TextField,Button, FormControlLabel,Typography,Checkbox } from "@mui/material"
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import Grid from '@mui/material/Grid2';
-import { useRecoilState, useRecoilValue } from "recoil";
-import { addressFormAtom, cartAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, selectedCardAtom } from "../atoms/state/cartAtom";
+import { useRecoilState, useRecoilStoreID, useRecoilValue } from "recoil";
+import { addressFormAtom, cartAtom, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, selectedCardAtom, useBillingAtom } from "../atoms/state/cartAtom";
 import { useEffect,useState } from "react";
 import { userState } from "../atoms/state/userAtom";
 import supabase from "../supabase/supabaseClient";
@@ -16,10 +16,14 @@ const PaymentForm = () => {
     const [cards,setCards] = useState(null)
     const [selectedCard,setSelectedCard] = useRecoilState(selectedCardAtom)
     const [save,setSave] = useRecoilState(saveBillingAddress)
+    const [use,setUse] = useRecoilState(useBillingAtom)
+    const [open,setOpen] = useRecoilState(newPaymentCardOpen)
+    const [newCard,setNewCard] = useRecoilState(newCardAtom)
 
     const handleChange = (e) => {
         const {name,value} = e.target;
         setPaymentForm((prev) => ({...prev,[name] : value}))
+        setNewCard((prev) => ({...prev,[name] :value}))
     }
     
     const handleSelection = (card) => {
@@ -92,6 +96,9 @@ const PaymentForm = () => {
                             control={
                                 <Checkbox
                                     checked={selectedCard === card.id.toString()}
+                                    onChange={() => {
+                                        setUse(false)
+                                    }}
                                 />
                             }
                             label={
@@ -109,15 +116,14 @@ const PaymentForm = () => {
                 ))
             }
             <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}} 
-            disabled={selectedCard}
             onClick={()=>{
                 setAddNewCard(prev => !prev)
             }}>
-                + Add New Card
+                {!open ? "+ Add New Card" : "collapse"}
             </Button>
         </Container>
         {
-            addNewCard &&
+            open &&
             <>
             <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
                 <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
@@ -131,7 +137,7 @@ const PaymentForm = () => {
                                 label="Card number"
                                 fullWidth
                                 variant="outlined"
-                                value={paymentForm.cardNumber || ''}
+                                value={newCard?.cardNumber || ''}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -143,7 +149,7 @@ const PaymentForm = () => {
                                 label="CVV"
                                 fullWidth
                                 variant="outlined"
-                                value={paymentForm.cvv || ''}
+                                value={newCard?.cvv || ''}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -155,7 +161,7 @@ const PaymentForm = () => {
                                 label="Name"
                                 fullWidth
                                 variant="outlined"
-                                value={paymentForm.name || ''}
+                                value={newCard?.name || ''}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -167,7 +173,7 @@ const PaymentForm = () => {
                                 label="Expiration date"
                                 fullWidth
                                 variant="outlined"
-                                value={paymentForm.expirationDate || ''}
+                                value={newCard?.expirationDate || ''}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -178,8 +184,11 @@ const PaymentForm = () => {
             <FormControlLabel
                 control={
                     <Checkbox
-                    checked={save}
-                    onChange={()=>{setSave(prev => !prev)}}
+                    checked={use}
+                    onChange={()=>{
+                        setUse(prev => !prev)
+                        setSelectedCard(null)
+                    }}
                     />
                 }
                 label={<Typography>Use this card</Typography>}

@@ -22,6 +22,8 @@ const AddressForm = () => {
     const [use,setUse] = useRecoilState(useShippingAtom)
     const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
 
+
+
     const handleChange = (e) => {
         const {name,value} = e.target;
         setNewAddress((prev) => ({...prev,[name] : value}))
@@ -59,7 +61,6 @@ const AddressForm = () => {
         const sessionAddress = sessionStorage.getItem("shippingAddress")
 
         if(sessionAddress){
-            setAddressFormData(JSON.parse(sessionAddress))
             setNewAddress(JSON.parse(sessionAddress))
         }
 
@@ -231,7 +232,8 @@ const AddressForm = () => {
                 onChange={()=>{
                     setUse(prev => !prev)
                     setSelectedAddress(null)
-                    setAddressFormData(newAddress); 
+                    if(use) setAddressFormData({})
+                    else setAddressFormData(newAddress)
                 }}
                 />
             }
