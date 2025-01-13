@@ -152,6 +152,7 @@ const CheckOut = () => {
         if(isPaymentFormValid(paymentForm)){
           setActiveStep(currentStep => currentStep+1)
           console.log(JSON.stringify(paymentForm))
+          console.log()
           if(newCard) sessionStorage.setItem("billingAddress",JSON.stringify(newCard))
         } else alert("Invalid details")
       }

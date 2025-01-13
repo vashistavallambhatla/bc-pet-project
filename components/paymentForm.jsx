@@ -24,6 +24,10 @@ const PaymentForm = () => {
         const {name,value} = e.target;
         setNewCard((prev) => ({...prev,[name] :value}))
     }
+
+    useEffect(() => {
+        if(use) setPaymentForm(newCard)
+    },[newCard])
     
     const handleSelection = (card) => {
 

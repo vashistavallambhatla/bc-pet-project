@@ -29,6 +29,10 @@ const AddressForm = () => {
         setNewAddress((prev) => ({...prev,[name] : value}))
     }
 
+    useEffect(() => {
+        if(use) setAddressFormData(newAddress)
+    },[newAddress])
+
     const handleAddressSelection = (address) => {
     
         if (selectedAddress === address.id.toString()) {
