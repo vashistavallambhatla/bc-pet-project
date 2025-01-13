@@ -45,6 +45,11 @@ export const newAddressOpen = atom({
     default : true
 })
 
+export const newAddressAtom = atom({
+    key : "newAddressAtom",
+    default : null
+})
+
 export const newPaymentCardOpen = atom({
     key : "newPaymentCard",
     default : false
@@ -66,5 +71,10 @@ export const saveShippingAddress = atom({
 })
 export const saveBillingAddress = atom({
     key : "saveBillingAddress",
+    default : false
+})
+
+export const useShippingAtom = atom({
+    key : "useShippingAtom",
     default : false
 })

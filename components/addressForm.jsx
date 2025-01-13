@@ -2,7 +2,7 @@ import { Container, Box, Typography, Button, TextField, FormControlLabel,Checkbo
 import Grid from '@mui/material/Grid2';
 import { useState,useEffect } from "react";
 import { useRecoilValue,useRecoilState } from "recoil";
-import { addressFormAtom,newAddressOpen, saveShippingAddress, selectedAddressAtom } from "../atoms/state/cartAtom";
+import { addressFormAtom,newAddressAtom,newAddressOpen, saveShippingAddress, selectedAddressAtom, useShippingAtom } from "../atoms/state/cartAtom";
 import { useNavigate } from "react-router-dom";
 import { cartAtom } from "../atoms/state/cartAtom";
 import { userState } from "../atoms/state/userAtom";
@@ -15,15 +15,16 @@ const AddressForm = () => {
     const navigate = useNavigate()
     const [addressFormData,setAddressFormData] = useRecoilState(addressFormAtom)
     const cart  = useRecoilValue(cartAtom)
-    const [addNewAdress,setAddNewAddress] = useRecoilState(newAddressOpen)
-    const [loading,setLoading] = useState(false)
+    const [open,setOpen] = useRecoilState(newAddressOpen)
     const [shippingAddresses,setShippingAddresses] = useState(null)
     const [selectedAddress,setSelectedAddress] = useRecoilState(selectedAddressAtom)
     const [save,setSave] = useRecoilState(saveShippingAddress)
+    const [use,setUse] = useRecoilState(useShippingAtom)
+    const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
 
     const handleChange = (e) => {
         const {name,value} = e.target;
-        setAddressFormData((prev) => ({...prev,[name] : value}))
+        setNewAddress((prev) => ({...prev,[name] : value}))
     }
 
     const handleAddressSelection = (address) => {
@@ -55,6 +56,13 @@ const AddressForm = () => {
     },[])
 
     useEffect(()=>{
+        const sessionAddress = sessionStorage.getItem("shippingAddress")
+
+        if(sessionAddress){
+            setAddressFormData(JSON.parse(sessionAddress))
+            setNewAddress(JSON.parse(sessionAddress))
+        }
+
         const getShippingAddress = async ()=> {
             if(user){
                 try{
@@ -73,9 +81,11 @@ const AddressForm = () => {
         getShippingAddress()
     },[user])
 
+
     if(!cart) return null
 
-    if(addNewAdress) return (
+    return (
+        <Container>
         <Container maxWidth="lg" sx={{display : "flex",justifyContent : "center",flexDirection : "column",alignItems : 'center',mt : 10}}>
             {shippingAddresses && shippingAddresses.map((address) => (
                 <Box 
@@ -97,7 +107,10 @@ const AddressForm = () => {
                         control={
                             <Checkbox 
                                 checked={selectedAddress === address.id.toString()}
-                                onChange={() => handleAddressSelection(address)}
+                                onChange={() => {
+                                    handleAddressSelection(address)
+                                    setUse(false)
+                                }}
                             />
                         }
                         label={
@@ -113,19 +126,17 @@ const AddressForm = () => {
                     />
                 </Box>
             ))}
-            <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}} onClick={()=>{
-                setAddNewAddress(false)
-                setAddressFormData({})
+            <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}}
+            onClick={()=>{
+                setOpen(prev => !prev)
             }}>
-                + Add New Address
+                {!open ? "+ Add New Address" : "collapse"}
             </Button>
         </Container>
-    )
     
-
-    return (
+        { open &&
         <>
-        <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
+        <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
             <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
                 <Typography variant="h4" gutterBottom>
                     Shipping Address
@@ -139,7 +150,7 @@ const AddressForm = () => {
                             label="First name"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.firstName || ''}
+                            value={newAddress?.firstName || ''}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -151,15 +162,15 @@ const AddressForm = () => {
                             label="Last name"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.lastName || ''}
+                            value={newAddress?.lastName || ''}
                             onChange={handleChange}
                         />
                     </Grid>
                     <Grid item size={12}>
-                        <TextField required id="addressLine1" name="addressLine1" label="Address line 1" fullWidth variant="outlined" value={addressFormData.addressLine1 || ''} onChange={handleChange} />
+                        <TextField required id="addressLine1" name="addressLine1" label="Address line 1" fullWidth variant="outlined" value={newAddress?.addressLine1 || ''} onChange={handleChange} />
                     </Grid>
                     <Grid item size={12}>
-                        <TextField required id="addressLine2" name="addressLine2" label="Address line 1" fullWidth variant="outlined" value={addressFormData.addressLine2 || ''} onChange={handleChange}/>
+                        <TextField required id="addressLine2" name="addressLine2" label="Address line 1" fullWidth variant="outlined" value={newAddress?.addressLine2 || ''} onChange={handleChange}/>
                     </Grid>
                     <Grid item size={6}>
                         <TextField
@@ -169,7 +180,7 @@ const AddressForm = () => {
                             label="City"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.city || ''}
+                            value={newAddress?.city || ''}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -181,7 +192,7 @@ const AddressForm = () => {
                             label="State"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.state || ''}
+                            value={newAddress?.state || ''}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -193,7 +204,7 @@ const AddressForm = () => {
                             label="Zip/Postal code"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.zipCode || ''}
+                            value={newAddress?.zipCode || ''}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -205,25 +216,48 @@ const AddressForm = () => {
                             label="Country"
                             fullWidth
                             variant="outlined"
-                            value={addressFormData.country || ''}
+                            value={newAddress?.country || ''}
                             onChange={handleChange}
                         />
                     </Grid>
                 </Grid>
             </Box>
         </Container>
+        <Box sx={{display : "flex",width : "700px",margin : "0 auto"}}>
+        <FormControlLabel
+            control={
+                <Checkbox
+                checked={use}
+                onChange={()=>{
+                    setUse(prev => !prev)
+                    setSelectedAddress(null)
+                    setAddressFormData(newAddress); 
+                }}
+                />
+            }
+            label={<Typography>Use this address</Typography>}
+            sx={{width : "100%",mt : ".5rem",pl : ".1rem"}}
+        /> 
         <FormControlLabel
             control={
                 <Checkbox
                 checked={save}
-                onChange={()=>{setSave(prev => !prev)}}
+                onChange={()=>{
+                    setSave(prev => !prev)
+                }}
                 />
             }
             label={<Typography>Save this address for future orders</Typography>}
-            sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
-        />
+            sx={{width : "100%",display : "flex",justifyContent : "flex-end",mt : ".1rem"}}
+        /> 
+        </Box>
         </>
-    );
+
+        }
+
+        </Container>
+    
+    )
 }
 
 export default AddressForm

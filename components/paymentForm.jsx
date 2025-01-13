@@ -45,6 +45,11 @@ const PaymentForm = () => {
     },[])
 
     useEffect(()=>{
+        const sessionAddress = sessionStorage.getItem("billingAddress")
+        if(sessionAddress){
+            setPaymentForm(JSON.parse(sessionAddress))
+            setAddNewCard(true)
+        }
         const getCards = async () =>  {
             if(user){
                 try{
@@ -64,7 +69,8 @@ const PaymentForm = () => {
 
     if(!cart) return null
 
-    if(!addNewCard) return (
+    return (
+        <Container>
         <Container maxWidth="lg" sx={{display : "flex",justifyContent : "center",flexDirection : "column",alignItems : 'center',mt : 10}}>
             {
                 cards && cards.map((card) => (
@@ -102,83 +108,97 @@ const PaymentForm = () => {
                     </Box>
                 ))
             }
-            <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}} onClick={()=>{
-                setAddNewCard(true)
-                setPaymentForm({})
+            <Button sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "300px",padding : "10px 0px"}} 
+            disabled={selectedCard}
+            onClick={()=>{
+                setAddNewCard(prev => !prev)
             }}>
                 + Add New Card
             </Button>
         </Container>
-    )
-
-    return (
-        <>
-        <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 10,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
-            <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
-                <CreditCardIcon sx={{fontSize : 60,mb : 2}}></CreditCardIcon>
-                <Grid container spacing={3}>
-                    <Grid item size={8}>
-                    <TextField
-                            required
-                            id="cardNumber"
-                            name="cardNumber"
-                            label="Card number"
-                            fullWidth
-                            variant="outlined"
-                            value={paymentForm.cardNumber || ''}
-                            onChange={handleChange}
-                        />
+        {
+            addNewCard &&
+            <>
+            <Container maxWidth="lg" sx={{display : 'flex',justifyContent : "center",mt : 5,backgroundColor : "white",width : "700px",padding : "30px 0px"}}>
+                <Box sx={{ mt: 4, mb: 4 , width : "600px"}}>
+                    <CreditCardIcon sx={{fontSize : 60,mb : 2}}></CreditCardIcon>
+                    <Grid container spacing={3}>
+                        <Grid item size={8}>
+                        <TextField
+                                required
+                                id="cardNumber"
+                                name="cardNumber"
+                                label="Card number"
+                                fullWidth
+                                variant="outlined"
+                                value={paymentForm.cardNumber || ''}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item size={4}>
+                        <TextField
+                                required
+                                id="cvv"
+                                name="cvv"
+                                label="CVV"
+                                fullWidth
+                                variant="outlined"
+                                value={paymentForm.cvv || ''}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item size={6}>
+                        <TextField
+                                required
+                                id="name"
+                                name="name"
+                                label="Name"
+                                fullWidth
+                                variant="outlined"
+                                value={paymentForm.name || ''}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item size={6}>
+                        <TextField
+                                required
+                                id="expirationDate"
+                                name="expirationDate"
+                                label="Expiration date"
+                                fullWidth
+                                variant="outlined"
+                                value={paymentForm.expirationDate || ''}
+                                onChange={handleChange}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item size={4}>
-                    <TextField
-                            required
-                            id="cvv"
-                            name="cvv"
-                            label="CVV"
-                            fullWidth
-                            variant="outlined"
-                            value={paymentForm.cvv || ''}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item size={6}>
-                    <TextField
-                            required
-                            id="name"
-                            name="name"
-                            label="Name"
-                            fullWidth
-                            variant="outlined"
-                            value={paymentForm.name || ''}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item size={6}>
-                    <TextField
-                            required
-                            id="expirationDate"
-                            name="expirationDate"
-                            label="Expiration date"
-                            fullWidth
-                            variant="outlined"
-                            value={paymentForm.expirationDate || ''}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                </Grid>
+                </Box>
+            </Container>
+            <Box sx={{display : "flex",justifyContent : "space-between"}}>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                    checked={save}
+                    onChange={()=>{setSave(prev => !prev)}}
+                    />
+                }
+                label={<Typography>Use this card</Typography>}
+                sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
+            />
+            <FormControlLabel
+                control={
+                    <Checkbox
+                    checked={save}
+                    onChange={()=>{setSave(prev => !prev)}}
+                    />
+                }
+                label={<Typography>Save this card</Typography>}
+                sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
+            />
             </Box>
+            </>
+        }
         </Container>
-        <FormControlLabel
-            control={
-                <Checkbox
-                checked={save}
-                onChange={()=>{setSave(prev => !prev)}}
-                />
-            }
-            label={<Typography>Save this card for future orders</Typography>}
-            sx={{width : "100%",display : "flex",justifyContent : "center",mt : "1rem"}}
-        />
-        </>
     )
 }
 

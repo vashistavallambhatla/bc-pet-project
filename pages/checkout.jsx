@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue,useRecoilState } from "recoil";
-import {addressFormAtom, cartAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
@@ -42,10 +42,8 @@ const CheckOut = () => {
     const total = useRecoilValue(totalAtom)
     const navigate = useNavigate()
     const [showAlert,setShowAlert] = useState(false)
-    const [newAddress,setNewAddress] = useRecoilState(newAddressOpen)
-    const [newCard,setNewCard] = useRecoilState(newPaymentCardOpen)
-    const [saveAddress,setSaveAddress] = useRecoilState(saveShippingAddress)
     const [saveCard,setSaveCard] = useRecoilState(saveBillingAddress)
+    const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
 
     const handleOrder = async () => {
       try {
@@ -147,14 +145,19 @@ const CheckOut = () => {
       if(activeStep === 0){
         if(validateAddress(addressForm)){
           setActiveStep(currentStep => currentStep+1)
+          if(newAddress) sessionStorage.setItem("shippingAddress",JSON.stringify(newAddress))
         } else alert("Fill in all the fields")
       } else if(activeStep === 1){
         if(isPaymentFormValid(paymentForm)){
           setActiveStep(currentStep => currentStep+1)
+          console.log(JSON.stringify(paymentForm))
+          sessionStorage.setItem("billingAddress",JSON.stringify(paymentForm))
         } else alert("Invalid details")
       }
       else if(activeStep === steps.length - 1) {
         handleOrder();
+        sessionStorage.removeItem("shippingAddress")
+        sessionStorage.removeItem("billingAddress")
     } else {
         setActiveStep(currentStep => {
             const newStep = currentStep + 1;
@@ -165,18 +168,7 @@ const CheckOut = () => {
     }
     const handlePrev = () => {
         if(activeStep === 0){
-          if(newAddress === false){
-            navigate("/checkout")
-            setNewAddress(true)
-          }
-          else navigate("/cart")
-        } else if(activeStep === 1){
-          if(newCard === true){
-            navigate("/checkout")
-            setNewCard(false)
-          } else {
-            setActiveStep(currentStep => currentStep - 1)
-          }
+          navigate("/cart")
         }
         else {
           setActiveStep(currentStep => {
