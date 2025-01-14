@@ -10,27 +10,10 @@ function validateAddress(address) {
         "country"
       ];
 
-    for(const field of requiredFields){
+    for(const field of requiredFields) {
         if(!address[field] || address[field].trim() === "") return false
     }
 
-    return true
-}
-
-function isValidExpiryDate(date){
-    console.log("date")
-    const [month,year] = date.split("/")
-    const expiryMonth = parseInt(month,10)
-    const expiryYear = parseInt(year,10)
-
-    const now = new Date()
-
-    const currentYear = now.getFullYear() % 100
-    const currentMonth = now.getMonth()
-    
-    if( expiryMonth < 1 || expiryMonth > 12) return false
-    if(currentYear>expiryYear) return false
-    if(currentYear === expiryYear && expiryMonth < currentMonth) return false
     return true
 }
 
@@ -48,10 +31,27 @@ function isPaymentFormValid(paymentForm){
         }
     }
 
-    if(!isValidCardNumber(paymentForm.cardNumber) || !isValidCardHolderName(paymentForm.name) || !isValidCvv(paymentForm.cvv) || !isValidExpiryDate(paymentForm.expirationDate)) {
-        return false
-    }
+    if(!isValidCardHolderName(paymentForm.name)) return {isValid : false,errorMessage : "Cardholder name can only contain letters and spaces"}
+    else if(!isValidExpiryDate(paymentForm.expirationDate)) return {isValid : false,errorMessage : "Expired card"}
+    else if(!isValidCardNumber(paymentForm.cardNumber)) return {isValid : false,errorMessage : "Invalid card number"}
+    else if(!isValidCvv(paymentForm.cvv)) return {isValid : false,errorMessage : "CVV must be 3 or 4 digits"}
+    
+    else return {isValid : true, errorMessage : ""}
+}
 
+function isValidExpiryDate(date){
+    const [month,year] = date.split("/")
+    const expiryMonth = parseInt(month,10)
+    const expiryYear = parseInt(year,10)
+
+    const now = new Date()
+
+    const currentYear = now.getFullYear() % 100
+    const currentMonth = now.getMonth()
+    
+    if( expiryMonth < 1 || expiryMonth > 12) return false
+    if(currentYear>expiryYear) return false
+    if(currentYear === expiryYear && expiryMonth < currentMonth) return false
     return true
 }
 
@@ -71,6 +71,7 @@ function isValidCardNumber(cardNumber) {
     const cardNumberRegex =  /^[0-9]{15,16}$/
     return cardNumberRegex.test(cardNumber)
 }
+
 
 
 export {validateAddress,isPaymentFormValid}

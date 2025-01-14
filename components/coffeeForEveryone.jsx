@@ -27,12 +27,12 @@ const CoffeeForEveryOne = () => {
                     </Box>
                 </Box>
                 <Box onClick={()=>{navigate("/collections/easy-bags")}}>
-                    <img src="https://cdn.shopify.com/s/files/1/1834/9395/files/Third_Wave13496.jpg" style={coffeeForEveryOneImg}/>
+                    <img src="https://cdn.shopify.com/s/files/1/1834/9395/files/Easy_Coffee_Bags_Vienna_Roast_pure_bd5f4f60-4b76-4610-be8e-b44a10df0876.jpg" style={coffeeForEveryOneImg}/>
                     <Typography sx={title}>easy coffee bags</Typography>
                     <Typography>No equipment needed</Typography>
                 </Box>
                 <Box onClick={()=>{navigate("/collections/cold-brew")}}>
-                    <img src="https://cdn.shopify.com/s/files/1/1834/9395/files/Easy_Coffee_Bags_Vienna_Roast_pure_bd5f4f60-4b76-4610-be8e-b44a10df0876.jpg" style={coffeeForEveryOneImg}/>
+                    <img src="https://cdn.shopify.com/s/files/1/1834/9395/files/Third_Wave13496.jpg" style={coffeeForEveryOneImg}/>
                     <Typography sx={title}>Easy cold brew</Typography>
                     <Typography>No equipment needed</Typography>
                 </Box>

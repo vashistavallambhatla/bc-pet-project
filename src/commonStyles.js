@@ -37,7 +37,7 @@ const formHeadings = {color : grey, fontSize : 80 ,fontFamily:"Raleway", marginB
 
 const authSwitchBtn = {color : coffee, textDecoration : "none", "&:hover": {textDecoration:"underline"},fontSize:"medium"}
 
-const navbarStyle = {backgroundColor : "white",padding : "1rem",color : grey,position : "sticky",top : "zero"}
+const navbarStyle = {backgroundColor : "white",padding : "1rem",color : grey,position : "sticky",top : "zero",zIndex : 2000}
 
 const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cover"}
 

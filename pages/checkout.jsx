@@ -11,12 +11,16 @@ import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
-import { useRecoilValue,useRecoilState } from "recoil";
-import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, totalAtom} from "../atoms/state/cartAtom.js"
+import { useRecoilValue,useRecoilState, useSetRecoilState } from "recoil";
+import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, selectedAddressAtom, selectedCardAtom, totalAtom, useBillingAtom, useShippingAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
 import { validateAddress,isPaymentFormValid} from "../utils/helperFunctions.js";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ClipLoader } from "react-spinners";
+
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
@@ -36,19 +40,25 @@ function getStepContent(step){
 const CheckOut = () => {
     const [activeStep,setActiveStep] = useState(0)
     const cart = useRecoilValue(cartAtom)
-    const addressForm = useRecoilValue(addressFormAtom)
-    const paymentForm = useRecoilValue(paymentFormAtom)
+    const [addressForm,setAddressForm] = useRecoilState(addressFormAtom)
+    const [paymentForm,setPaymentForm] = useRecoilState(paymentFormAtom)
     const user = useRecoilValue(userState)
     const total = useRecoilValue(totalAtom)
     const navigate = useNavigate()
-    const [showAlert,setShowAlert] = useState(false)
-    const saveCard= useRecoilValue(saveBillingAddress)
-    const saveAddress = useRecoilValue(saveShippingAddress)
+    const [showConfirming,setShowConfirming] = useState(false)
+    const [saveCard,setSaveCard]= useRecoilState(saveBillingAddress)
+    const [saveAddress,setSaveAddress] = useRecoilState(saveShippingAddress)
     const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
     const [newCard,setNewCard] = useRecoilState(newCardAtom)
+    const setSelectedAddress = useSetRecoilState(selectedAddressAtom)
+    const setSelectedCard = useSetRecoilState(selectedCardAtom)
+    const setUseAddress = useSetRecoilState(useShippingAtom)
+    const setUseBilling = useSetRecoilState(useBillingAtom)
+    const [errorToast,setErrorToast] = useState(null)
 
     const handleOrder = async () => {
       try {
+        setShowConfirming(true)
         const { data: order, error: orderError } = await supabase.from("orders").insert([{
           user_id: user.id,
           total_amount: total,
@@ -117,19 +127,27 @@ const CheckOut = () => {
 
         await deleteCartItems()
 
-        setShowAlert(true)
-        
-        setTimeout(()=>{
-          setShowAlert(false)
-        },3000)
-
         sessionStorage.removeItem("shippingAddress")
         sessionStorage.removeItem("billingAddress")
+        setAddressForm({})
+        setPaymentForm({})
+        setNewAddress(null)
+        setNewCard(null)
+        setSaveCard(false)
+        setSaveAddress(false)
+        setSelectedAddress(null)
+        setSelectedCard(null)
+        setUseAddress(false)
+        setUseBilling(false)
         
-        window.location.reload("/cart")
+
+        /*window.location.reload("/cart")*/
+        navigate("/confirmed")
       } catch (error) {
         console.error('Error in handleOrder:', error);
-      } 
+      } finally{
+        setShowConfirming(false)
+      }
     }
 
     const deleteCartItems = async() => {
@@ -158,14 +176,18 @@ const CheckOut = () => {
         else alert("Fill in all the fields")
 
       } else if(activeStep === 1){
+        const validation = isPaymentFormValid(paymentForm)
 
-        if(isPaymentFormValid(paymentForm)){
+        if(validation.isValid){
           setActiveStep(currentStep => currentStep+1)
           console.log(JSON.stringify(paymentForm))
           console.log()
           if(newCard) sessionStorage.setItem("billingAddress",JSON.stringify(newCard))
         } 
-        else alert("Invalid details")
+        else {
+          setErrorToast(validation.errorMessage)
+          setTimeout(()=>{setErrorToast(null)},500)
+        }
 
       }
       else if(activeStep === steps.length - 1) {
@@ -186,17 +208,50 @@ const CheckOut = () => {
         }
     }  
 
-    return (
+    React.useEffect(() => {
+      if (errorToast) {
+        toast.info(errorToast, {
+          position: "top-right",  
+          autoClose: 3000,       
+          hideProgressBar: true,  
+          closeOnClick: true,      
+          pauseOnHover: true,    
+          draggable: true,   
+          progress: undefined,  
+        });
+      }
+    },[errorToast])
+
+    if (showConfirming) {
+      return (
+        <>
         <Container>
-          {
-                showAlert && (
-                    <Box sx={{position : "fixed",top : "50%",left : "50%",transform: 'translate(-50%, -50%)',width : "600px",zIndex : 1300}}>
-                        <Alert variant="filled"  severity="success">
-                            {"Order Confirmed :)"}
-                        </Alert>
-                    </Box>
-                )
-            }
+            <Box
+              sx={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 1300,
+                flexDirection : "column"
+              }}
+            >
+              <ClipLoader size={500} color="#28a745" />
+              <Typography variant="h2" sx={{color : "#28a745",fontWeight : "bold"}}>CONFIRMING ORDER!</Typography>
+            </Box>
+        </Container>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <ToastContainer></ToastContainer>
+        <Container>
             <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}
@@ -260,6 +315,7 @@ const CheckOut = () => {
                 </Box>
               </React.Fragment>
         </Container>
+      </>
     );
 };
 
