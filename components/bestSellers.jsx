@@ -1,11 +1,13 @@
 import { Container,Box,Typography } from "@mui/material"
 import Card from "../components/card.jsx"
 import { homePageHeadings,homePageLeftBox } from "../src/commonStyles.js"
-import { useEffect } from "react"
+import { useEffect,useState } from "react"
 import supabase from "../supabase/supabaseClient.js"
 
 
 const BestSellers = () => {
+
+    const [bestsellers,setBestsellers] = useState([])
 
     const bestSellers = [
         {   
@@ -31,13 +33,19 @@ const BestSellers = () => {
         }
     ]
 
-    /*useEffect(()=>{
+    useEffect(()=>{
         const getBestsellers = async () => {
             try {
-                const {data,error} = await supabase.
+                const {data,error} = await supabase.from("products").select("*").eq("bestseller","TRUE")
+                if(error) throw new Error("Error while fetching bestsellers",error.message)
+                console.log(data)
+                setBestsellers(data)
+            } catch(error) {
+                console.error(error)
             }
         } 
-    },[])*/
+        getBestsellers()
+    },[])
     
     return (
         <Container maxWidth={false} sx={{display : "flex",fontFamily : "Raleway",marginTop : "5rem",marginBottom : "5rem",p: 0, 
@@ -53,7 +61,7 @@ const BestSellers = () => {
             </Box>
             <Box sx={{display : "flex",maxWidth : "100%"}}>
                 {
-                    bestSellers.map((product) => (
+                    bestsellers.map((product) => (
                         <Box key={product.id}>
                             <Card product={product}/>
                         </Box>
