@@ -1,12 +1,13 @@
 import { Container, Box, Typography, Button, TextField, FormControlLabel,Checkbox } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { useState,useEffect } from "react";
-import { useRecoilValue,useRecoilState } from "recoil";
+import { useRecoilValue,useRecoilState, useSetRecoilState } from "recoil";
 import { addressFormAtom,newAddressAtom,newAddressOpen, saveShippingAddress, selectedAddressAtom, useShippingAtom } from "../atoms/state/cartAtom";
 import { useNavigate } from "react-router-dom";
 import { cartAtom } from "../atoms/state/cartAtom";
 import { userState } from "../atoms/state/userAtom";
 import supabase from "../supabase/supabaseClient";
+import { ClipLoader } from "react-spinners";
 
 
 
@@ -21,6 +22,7 @@ const AddressForm = () => {
     const [save,setSave] = useRecoilState(saveShippingAddress)
     const [use,setUse] = useRecoilState(useShippingAtom)
     const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
+    const [loading,setLoading] = useState(true)
 
 
 
@@ -70,6 +72,7 @@ const AddressForm = () => {
 
         const getShippingAddress = async ()=> {
             if(user){
+                setLoading(true)
                 try{
                     const {data : shippingAddresses,error : shippingAddressError} = await supabase.from("shipping_address").select("*").eq("user_id",user.id)
                     if(shippingAddressError) throw new Error(`Error while fetching shippingAddresses`,shippingAddressError)
@@ -79,13 +82,22 @@ const AddressForm = () => {
                     console.log(shippingAddresses)
                 } catch(error) {
                     console.error(error)
+                } finally {
+                    setLoading(false)
                 }
-            }
+            } else setLoading(false)
         }
 
         getShippingAddress()
     },[user])
 
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
+    }
 
     if(!cart) return null
 
@@ -258,9 +270,7 @@ const AddressForm = () => {
         /> 
         </Box>
         </>
-
         }
-
         </Container>
     
     )

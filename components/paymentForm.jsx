@@ -6,6 +6,7 @@ import { addressFormAtom, cartAtom, newCardAtom, newPaymentCardOpen, paymentForm
 import { useEffect,useState } from "react";
 import { userState } from "../atoms/state/userAtom";
 import supabase from "../supabase/supabaseClient";
+import { ClipLoader } from "react-spinners";
 
 
 const PaymentForm = () => {
@@ -19,6 +20,7 @@ const PaymentForm = () => {
     const [use,setUse] = useRecoilState(useBillingAtom)
     const [open,setOpen] = useRecoilState(newPaymentCardOpen)
     const [newCard,setNewCard] = useRecoilState(newCardAtom)
+    const [loading,setLoading] = useState(true)
 
     const handleChange = (e) => {
         const {name,value} = e.target;
@@ -59,6 +61,7 @@ const PaymentForm = () => {
         }
         const getCards = async () =>  {
             if(user){
+                setLoading(true)
                 try{
                     const {data : cardsArray,error : cardsError} = await supabase.from("billing_address").select("*").eq("user_id",user.id)
                     if(cardsError) throw new Error(`Error while fetching payment cards`,error)
@@ -67,12 +70,22 @@ const PaymentForm = () => {
                     console.log(cardsArray)
                 } catch(error) {
                     console.error(error)
+                } finally {
+                    setLoading(false)
                 }
-            }
+            } else setLoading(false)
         }
 
         getCards()
     },[user])
+
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
+    }
 
     if(!cart) return null
 

@@ -140,8 +140,6 @@ const CheckOut = () => {
         setUseAddress(false)
         setUseBilling(false)
         
-
-        /*window.location.reload("/cart")*/
         navigate("/confirmed")
       } catch (error) {
         console.error('Error in handleOrder:', error);

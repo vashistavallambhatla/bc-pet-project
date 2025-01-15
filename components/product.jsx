@@ -7,6 +7,7 @@ import supabase from "../supabase/supabaseClient"
 import { useNavigate, useParams } from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import React from 'react'
+import { ClipLoader } from "react-spinners"
 import 'react-toastify/dist/ReactToastify.css';
 
 const Product = () => {
@@ -19,7 +20,8 @@ const Product = () => {
     const [showAlert,setShowAlert] = useState(false)
     const navigate = useNavigate()  
     const [loginAlert,setLoginAlert] = useState(false)  
-    const [price,setPrice] = useState(null)       
+    const [price,setPrice] = useState(null)      
+    const [loading,setLoading] = useState(true) 
     
     React.useEffect(() => {
         if (showAlert) {
@@ -50,16 +52,20 @@ const Product = () => {
       }, [showAlert, loginAlert]);
 
     useEffect(() => {
-
         const getProduct = async() => {
-            console.log(productId)
-            const {data : response,error} = await supabase.from("products").select("*").eq("id",productId).single()
-            if(error) throw new Error(`Error while fetching the product : ${error.message}`)
-            if(!response || response.length===0) throw new Error(`Null Product`)
-            
-            console.log(response)
-            setCurrent(response)
-            setPrice(response.price)
+            try{
+                setLoading(true)
+                const {data : response,error} = await supabase.from("products").select("*").eq("id",productId).single()
+                if(error) throw new Error(`Error while fetching the product : ${error.message}`)
+                if(!response || response.length===0) throw new Error(`Null Product`)
+        
+                setCurrent(response)
+                setPrice(response.price)
+            } catch(error){
+                console.error(error)
+            } finally {
+                setLoading(false)
+            }
         }
 
         getProduct()
@@ -90,6 +96,14 @@ const Product = () => {
                 console.error(`Error while adding to the cart ${error.message}`)
             }
         }
+    }
+
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
     }
 
     if(!current) return <div></div>

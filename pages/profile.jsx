@@ -11,7 +11,6 @@ import { orderItemsAtom } from "../atoms/state/cartAtom"
 import { userDetailsAtom } from "../atoms/state/userAtom"
 import { coffee } from "../src/commonStyles"
 import Grid from '@mui/material/Grid2';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 const buttonStyle = {
     backgroundColor: coffee,
@@ -56,20 +55,19 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (user && (!userDetails || !orderItems)) {
+        if(user){
+            const fetchData = async () => {
                 setLoading(true)
                 try {
-                    console.log("here")
                     const [userResponse, ordersResponse] = await Promise.all([
                         
-                        !userDetails ? supabase
+                        supabase
                             .from('users')
                             .select('*')
                             .eq('id', user.id)
-                            .single() : Promise.resolve({ data: userDetails }),
+                            .single(),
             
-                        !orderItems ? supabase
+                        supabase
                             .from("orders")
                             .select(`
                                 *,
@@ -78,24 +76,25 @@ const Profile = () => {
                                     products(name, image_url, price)
                                 )
                             `)
-                            .eq("user_id", user.id) : Promise.resolve({ data: orderItems })
+                            .eq("user_id", user.id) 
                     ]);
 
                     if (userResponse.error) throw new Error(`Error fetching user: ${userResponse.error.message}`);
                     if (ordersResponse.error) throw new Error(`Error fetching orders: ${ordersResponse.error.message}`);
 
-                    if (!userDetails) setUserDetails(userResponse.data);
-                    if (!orderItems) setOrderItems(ordersResponse.data);
+                    setUserDetails(userResponse.data);
+                    setOrderItems(ordersResponse.data);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 } finally {
                     setLoading(false);
                 }
-            }
         };
-
         fetchData();
-    }, [user, userDetails, orderItems, setUserDetails, setOrderItems]);
+        } else {
+            setLoading(false)
+        }
+    }, [user]);
 
     const renderOrders = () => {
         if (!orderItems || orderItems.length === 0) {
