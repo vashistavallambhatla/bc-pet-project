@@ -1,5 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Container, Typography,Box, IconButton } from "@mui/material"
+import { Container, Typography,Box, IconButton,Button } from "@mui/material"
 import supabase from '../supabase/supabaseClient';
 import { useSetRecoilState } from 'recoil';
 import { deleteAtom } from '../atoms/state/cartAtom';
@@ -29,8 +29,12 @@ const CartItem = ({item}) => {
             <Box sx={{display : "flex",flexDirection : "column", justifyContent : "center",gap : "1.5rem"}}>
                 <Typography variant="h4" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{item.products.name}</Typography>
                 <Typography variant="h7" sx={{fontWeight : "bold"}}>Rs.{item.products.price}</Typography>
-                <Box sx={{display : "flex",gap : "1rem"}}>
-                    <Typography>Quantity: {item.quantity}</Typography>
+                <Box sx={{display : "flex",gap : "2rem"}}>
+                    <Box sx={{display: "flex",gap: "1rem",alignItems: "center",justifyContent: "center"}}>
+                        <button>-</button>
+                        <Typography>Quantity: {item.quantity}</Typography>
+                        <button>+</button>
+                    </Box>
                     <Typography>Size: {item.weight}g</Typography>
                 </Box>
             </Box>

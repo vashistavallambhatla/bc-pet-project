@@ -89,4 +89,9 @@ export const useBillingAtom = atom({
     default : false
 })
 
+export const checkoutLoadingAtom = atom({
+    key : "checkoutLoadingAtom",
+    default : true
+})
+
 
