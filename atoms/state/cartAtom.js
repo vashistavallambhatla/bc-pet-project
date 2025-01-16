@@ -94,4 +94,7 @@ export const checkoutLoadingAtom = atom({
     default : true
 })
 
-
+export const cartUpdatedAtom = atom({
+    key : "cartUpdatedAtom",
+    default : false
+})

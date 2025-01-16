@@ -2,10 +2,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Container, Typography,Box, IconButton,Button } from "@mui/material"
 import supabase from '../supabase/supabaseClient';
 import { useSetRecoilState } from 'recoil';
-import { deleteAtom } from '../atoms/state/cartAtom';
+import { cartUpdatedAtom, deleteAtom } from '../atoms/state/cartAtom';
+import debounce from 'lodash.debounce';
+import { useCallback, useState, useEffect } from 'react';
 
 const CartItem = ({item}) => {
     const setDeleteAtom = useSetRecoilState(deleteAtom)
+    const [quantity,setQuantity] = useState(item.quantity)
+    const setCartUpdated = useSetRecoilState(cartUpdatedAtom)
 
     const handleDelete = async(cartItemId) => {
         try {
@@ -15,11 +19,41 @@ const CartItem = ({item}) => {
             
             console.log(`Deleted cart items: `,response)
             setDeleteAtom(true)
-            console.log("Here")
         } catch(error){
             console.error(`Error: `,error)
         }
     }
+
+    const debouncedUpdate = useCallback(
+        debounce( async(cartItemId,newQuantity) => {
+            try {
+                const {data,error} = await supabase.from("cart_items").update({quantity : newQuantity}).eq("id",cartItemId)
+                if(error) throw new Error("Error while updating the quantity",error.message)
+                setCartUpdated(true)
+            } catch(error){
+                console.error(error)
+            }
+        },500),
+        []
+    )
+
+    useEffect(() => {
+        return () => {
+            debouncedUpdate.cancel();
+        };
+    }, [debouncedUpdate]);
+
+    const handleIncrement = () => {
+        const newQuantity = quantity + 1;
+        debouncedUpdate(item.id, newQuantity);
+    };
+
+    const handleDecrement = () => {
+        if (quantity > 1) {
+            const newQuantity = quantity - 1;
+            debouncedUpdate(item.id, newQuantity); 
+        }
+    };
 
     return (
         <Container maxWidth={false} sx={{display : "flex",gap : "2rem",backgroundColor : "white",padding : "20px",justifyContent : "space-between"}}>
@@ -31,9 +65,9 @@ const CartItem = ({item}) => {
                 <Typography variant="h7" sx={{fontWeight : "bold"}}>Rs.{item.products.price}</Typography>
                 <Box sx={{display : "flex",gap : "2rem"}}>
                     <Box sx={{display: "flex",gap: "1rem",alignItems: "center",justifyContent: "center"}}>
-                        <button>-</button>
-                        <Typography>Quantity: {item.quantity}</Typography>
-                        <button>+</button>
+                        <button onClick={handleDecrement}>-</button>
+                        <Typography>Quantity: {quantity}</Typography>
+                        <button onClick={handleIncrement}>+</button>
                     </Box>
                     <Typography>Size: {item.weight}g</Typography>
                 </Box>

@@ -6,18 +6,18 @@ import { userState } from "../atoms/state/userAtom"
 import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
-import { cartAtom, deleteAtom, totalAtom, cartu, cartId } from "../atoms/state/cartAtom"
+import { cartAtom, deleteAtom, totalAtom, cartu, cartId, cartUpdatedAtom } from "../atoms/state/cartAtom"
 import ClipLoader from "react-spinners/ClipLoader";
 
 const Cart = () => {
     const user = useRecoilValue(userState)
-    /*const [cart,setCart] = useRecoilState(cartAtom)*/
     const [cart,setCart] = useState(null)
     const [loading,setLoading] = useState(true)
     const navigate = useNavigate()
     const setCartState = useSetRecoilState(cartAtom)
     const setTotalAtom = useSetRecoilState(totalAtom)
     const [deleted,setDeleteAtom] = useRecoilState(deleteAtom)
+    const [cartUpdated,setCartUpdated] = useRecoilState(cartUpdatedAtom)
 
     useEffect(()=>{
         if(user){
@@ -40,6 +40,7 @@ const Cart = () => {
                 } finally {
                     setLoading(false)
                     setDeleteAtom(false)
+                    setCartUpdated(false)
                 }
             } 
             
@@ -47,7 +48,7 @@ const Cart = () => {
         } else {
             setLoading(false)
         }
-    },[user,deleted])
+    },[user,deleted,cartUpdated])
 
 
     const totalPrice = cart ? cart.reduce((total, cartItem) => {
