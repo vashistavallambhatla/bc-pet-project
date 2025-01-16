@@ -42,7 +42,7 @@ export const orderItemsAtom = atom({
 
 export const newAddressOpen = atom({
     key : "newAddressOpen",
-    default : true
+    default : false
 })
 
 export const newAddressAtom = atom({

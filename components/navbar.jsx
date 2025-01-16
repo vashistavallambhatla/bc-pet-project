@@ -2,7 +2,6 @@ import { AppBar,IconButton,Typography,Toolbar,Box,Menu,MenuItem,TextField} from 
 import { navbarStyle } from "../src/commonStyles"
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth"
 import LogoutIcon from '@mui/icons-material/Logout'
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
@@ -100,16 +99,18 @@ const Navbar = () => {
                         <MenuItem onClick={() => setLearnAnchor(null)}>Brewing guides</MenuItem>
                     </Menu>
                 </Box>
-                <Box sx={{position: "fixed",left : "50%",transform: "translateX(-50%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
+                <Box sx={{position: "absolute",left : "50%",transform: "translateX(-50%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
                     <Typography variant="h4" sx={{fontWeight: "bold",fontFamily : "Raleway"}}>Coffee Zyada</Typography>
                 </Box>
                 <Box sx={{gap : "1rem",display : "flex"}}>
                     {
                         search && 
-                        <TextField id="standard-basic" label="Search coffee" variant="standard" onChange={(e) => [setSearchParam(e.target.value)]}/>
+                        <Box>
+                            <TextField id="standard-basic" label="Search coffee" variant="standard" onChange={(e) => [setSearchParam(e.target.value)]}/>
+                        </Box>
                     }
                     { 
-                        <Box onClick={handleSearch}>
+                        <Box onClick={handleSearch} sx={{display : "flex",alignItems : "center",mr : "1rem"}}>
                             <img src="src/assets/icons8-search-100.png" alt="search" width={"50px"}></img>
                         </Box>
                     }
