@@ -1,12 +1,12 @@
 import { Container, Typography ,Box ,Button} from "@mui/material"
 import supabase from "../supabase/supabaseClient"
-import { useEffect,useState } from "react"
+import { useEffect,useRef,useState } from "react"
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil"
 import { userState } from "../atoms/state/userAtom"
 import CartItem from "../components/cartItem"
 import { productCardBtn } from "../src/commonStyles"
 import { useNavigate } from "react-router-dom"
-import { cartAtom, deleteAtom, totalAtom, cartu, cartId, cartUpdatedAtom } from "../atoms/state/cartAtom"
+import { cartAtom, deleteAtom, totalAtom, cartUpdatedAtom } from "../atoms/state/cartAtom"
 import ClipLoader from "react-spinners/ClipLoader";
 
 const Cart = () => {
@@ -18,6 +18,9 @@ const Cart = () => {
     const setTotalAtom = useSetRecoilState(totalAtom)
     const [deleted,setDeleteAtom] = useRecoilState(deleteAtom)
     const [cartUpdated,setCartUpdated] = useRecoilState(cartUpdatedAtom)
+    const cartIdRef = useRef(null)
+
+    console.log(cartIdRef)
 
     useEffect(()=>{
         if(user){
@@ -28,6 +31,7 @@ const Cart = () => {
 
                     if(cartError) throw new Error(`Error fetching cartId : ${cartError.message}`)
                     if(!cartId) throw new Error(`No cart found for user`)
+                    cartIdRef.current = cartId.id
 
                     const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,price,products(name,image_url,price)").eq("cart_id",cartId.id)
 
@@ -50,6 +54,17 @@ const Cart = () => {
         }
     },[user,deleted,cartUpdated])
 
+    const handleNext = async() => {
+        try{
+            console.log(cartIdRef)
+            const final = totalPrice.toFixed(2)
+            const {error} = await supabase.from("cart").update({total : final}).eq("id",cartIdRef.current)
+            if(error) throw new Error('Error while finalizing the cart total',error.message)
+            navigate("/checkout")
+        } catch(error){
+            console.error(error)
+        }
+    }
 
     const totalPrice = cart ? cart.reduce((total, cartItem) => {
         const price = cartItem.products.price * (cartItem.weight / 250);
@@ -94,7 +109,7 @@ const Cart = () => {
             <Box sx={{display : "flex",gap : "2rem",backgroundColor : "white",width : "700px",padding : "20px",justifyContent : "space-between",marginTop : "10px",boxSizing : "border-box"}}>
                 <Typography variant="h6" sx={{fontWeight : "bold"}}>Total: Rs.{totalPrice.toFixed(2)}</Typography>
                 <Box sx={{width : "200px"}}>
-                    <Button sx={productCardBtn} onClick={()=>{navigate("/checkout")}}>CHECKOUT</Button>
+                    <Button sx={productCardBtn} onClick={handleNext}>CHECKOUT</Button>
                 </Box>
             </Box>
         </Container>

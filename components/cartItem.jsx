@@ -23,9 +23,7 @@ const CartItem = ({item}) => {
             console.error(`Error: `,error)
         }
     }
-
-    console.log(item)
-
+    
     const debouncedUpdate = useCallback(
         debounce( async(cartItemId,newQuantity,updatedPrice) => {
             try {
