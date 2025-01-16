@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import Card from "../components/card";
 import { Container,Box } from "@mui/material";
+import { ClipLoader } from "react-spinners";
 
 const Search = () => {
     const [loading,setLoading] = useState(true)
@@ -27,7 +28,15 @@ const Search = () => {
         fetchSearchResult()
     },[searchQuery])
 
-    if(!searchResults) return <div>No products founnd!</div>
+    if (loading) {
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <ClipLoader />
+          </div>
+        );
+    }
+
+    if(searchResults.length===0) return <div style={{display : "flex",justifyContent : "center",alignItems : "center",height : "80vh"}}>No products found!</div>
 
     return (
         <Container maxWidth={false} sx={{display : "flex",justifyContent : "center",marginTop : "5rem"}}>
