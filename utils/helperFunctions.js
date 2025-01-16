@@ -27,7 +27,7 @@ function isPaymentFormValid(paymentForm){
 
     for(const field of requiredFields){
         if(!paymentForm[field] || paymentForm[field].trim() === "") {
-            return false
+            return {isValid : false,errorMessage : "Empty address"}
         }
     }
 

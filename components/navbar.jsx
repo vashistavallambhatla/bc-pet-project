@@ -4,6 +4,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from "react-router-dom"
 import LogoutIcon from '@mui/icons-material/Logout'
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { userState } from "../atoms/state/userAtom"
 import supabase from "../supabase/supabaseClient"
@@ -63,21 +64,22 @@ const Navbar = () => {
                             vertical: 'top',
                             horizontal: 'left',
                        }}
+                       sx={{zIndex : 7000}}
                    >
                         <MenuItem onClick={() => {
-                            window.location.href = "/collections/all"
+                            navigate("/collections/all")
                             setShopAnchor(null)
                         }}>All items</MenuItem>
                         <MenuItem onClick={() => {
-                            window.location.href = "/collections/beans"
+                            navigate("/collections/beans")
                             setShopAnchor(null)
                         }}>Coffe Beans</MenuItem>
                         <MenuItem onClick={() => {
-                            window.location.href = "/collections/easy-bags"
+                            navigate("/collections/easy-bags")
                             setShopAnchor(null)
                         }}>Easy Coffee Bags</MenuItem>
                         <MenuItem onClick={() => {
-                            window.location.href = "/collections/cold-brew"
+                            navigate("/collections/cold-brew")
                             setShopAnchor(null)
                         }}>Easy Cold Brew Bags</MenuItem>
                     </Menu>
@@ -95,6 +97,7 @@ const Navbar = () => {
                             vertical: 'top',
                             horizontal: 'left',
                        }}
+                       sx={{zIndex : 7000}}
                    >
                         <MenuItem onClick={() => setLearnAnchor(null)}>Brewing guides</MenuItem>
                     </Menu>
@@ -109,11 +112,9 @@ const Navbar = () => {
                             <TextField id="standard-basic" label="Search coffee" variant="standard" onChange={(e) => [setSearchParam(e.target.value)]}/>
                         </Box>
                     }
-                    { 
-                        <Box onClick={handleSearch} sx={{display : "flex",alignItems : "center",mr : "1rem"}}>
-                            <img src="src/assets/icons8-search-100.png" alt="search" width={"50px"}></img>
-                        </Box>
-                    }
+                    <IconButton onClick={handleSearch}>
+                        <SearchIcon/>
+                    </IconButton>
                     <IconButton onClick={()=>{navigate("/cart")}}>
                         <ShoppingBagOutlinedIcon/>
                     </IconButton>
