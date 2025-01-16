@@ -24,9 +24,9 @@ const Review = () => {
     }
 
     const totalPrice = cart.reduce((total, cartItem) => {
-        const price = cartItem.products.price;
+        const price = cartItem.price;
         const quantity = cartItem.quantity;
-        return total + price * quantity;
+        return total + price
     }, 0); 
 
     return (

@@ -29,7 +29,7 @@ const Cart = () => {
                     if(cartError) throw new Error(`Error fetching cartId : ${cartError.message}`)
                     if(!cartId) throw new Error(`No cart found for user`)
 
-                    const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,products(name,image_url,price)").eq("cart_id",cartId.id)
+                    const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,price,products(name,image_url,price)").eq("cart_id",cartId.id)
 
                     if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError.message}`)
                     

@@ -24,10 +24,12 @@ const CartItem = ({item}) => {
         }
     }
 
+    console.log(item)
+
     const debouncedUpdate = useCallback(
-        debounce( async(cartItemId,newQuantity) => {
+        debounce( async(cartItemId,newQuantity,updatedPrice) => {
             try {
-                const {data,error} = await supabase.from("cart_items").update({quantity : newQuantity}).eq("id",cartItemId)
+                const {data,error} = await supabase.from("cart_items").update({quantity : newQuantity,price : updatedPrice}).eq("id",cartItemId)
                 if(error) throw new Error("Error while updating the quantity",error.message)
                 setCartUpdated(true)
             } catch(error){
@@ -45,13 +47,15 @@ const CartItem = ({item}) => {
 
     const handleIncrement = () => {
         const newQuantity = quantity + 1;
-        debouncedUpdate(item.id, newQuantity);
+        const newPrice = item.price + item.products.price * (item.weight / 250)
+        debouncedUpdate(item.id, newQuantity,newPrice);
     };
 
     const handleDecrement = () => {
         if (quantity > 1) {
             const newQuantity = quantity - 1;
-            debouncedUpdate(item.id, newQuantity); 
+            const newPrice = item.price - item.products.price * (item.weight / 250)
+            debouncedUpdate(item.id, newQuantity, newPrice); 
         }
     };
 
@@ -62,7 +66,6 @@ const CartItem = ({item}) => {
             </Box>
             <Box sx={{display : "flex",flexDirection : "column", justifyContent : "center",gap : "1.5rem"}}>
                 <Typography variant="h4" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{item.products.name}</Typography>
-                <Typography variant="h7" sx={{fontWeight : "bold"}}>Rs.{item.products.price}</Typography>
                 <Box sx={{display : "flex",gap : "2rem"}}>
                     <Box sx={{display: "flex",gap: "1rem",alignItems: "center",justifyContent: "center"}}>
                         <button onClick={handleDecrement}>-</button>
@@ -71,6 +74,7 @@ const CartItem = ({item}) => {
                     </Box>
                     <Typography>Size: {item.weight}g</Typography>
                 </Box>
+                <Typography variant="h7" sx={{fontWeight : "bold"}}>Rs.{item.price}</Typography>
             </Box>
             <IconButton onClick={()=>{handleDelete(item.id)}} >
                 <DeleteIcon sx={{width : "100px"}}></DeleteIcon>

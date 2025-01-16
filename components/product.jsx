@@ -1,6 +1,6 @@
 import {Container,Box,Typography,Button,FormControl,InputLabel,Select,MenuItem, Alert} from "@mui/material"
 import { buttonStyles, coffee } from "../src/commonStyles"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { userState } from "../atoms/state/userAtom"
 import { useRecoilValue } from "recoil"
 import supabase from "../supabase/supabaseClient"
@@ -20,7 +20,7 @@ const Product = () => {
     const [showAlert,setShowAlert] = useState(false)
     const navigate = useNavigate()  
     const [loginAlert,setLoginAlert] = useState(false)  
-    const [price,setPrice] = useState(null)      
+    const price= useRef(null)     
     const [loading,setLoading] = useState(true) 
     
     React.useEffect(() => {
@@ -60,7 +60,8 @@ const Product = () => {
                 if(!response || response.length===0) throw new Error(`Null Product`)
         
                 setCurrent(response)
-                setPrice(response.price)
+                price.current = response.price
+                console.log(price.current)
             } catch(error){
                 console.error(error)
             } finally {
@@ -84,7 +85,7 @@ const Product = () => {
                 if(cartIdError) throw new Error(`Error fetching cartId : ${cartIdError.message}`)
                 console.log(cartId)
     
-                const {data : response,error} = await supabase.from("cart_items").insert([{cart_id : cartId.id,product_id : productId,quantity : quantity,weight : size,grind_size : grindSize}])
+                const {data : response,error} = await supabase.from("cart_items").insert([{cart_id : cartId.id,product_id : productId,quantity : quantity,weight : size,grind_size : grindSize,price : price.current}])
     
                 if(error) throw new Error(`Error while add item to the cart : ${error}`)
                 console.log("Item added to the cart successfully",response)
@@ -149,6 +150,8 @@ const Product = () => {
                                 label="packet-size"
                                 onChange={(e) => {
                                     setSize(e.target.value)
+                                    price.current = current.price * (e.target.value / 250)
+                                    console.log(price.current)
                                 }}
                             >
                                 <MenuItem value={250}>250</MenuItem>
@@ -162,7 +165,10 @@ const Product = () => {
                                 id="quantity-simple-select"
                                 defaultValue={quantity}
                                 label="quantity"
-                                onChange={(e) => {setQuantity(e.target.value)}}
+                                onChange={(e) => {
+                                    setQuantity(e.target.value)
+                                    price.current = price.current * e.target.value
+                                }}
                             >
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
@@ -173,7 +179,7 @@ const Product = () => {
                         </FormControl>
                     </Box>
                     <Box>
-                        <Typography variant="h5" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>Price : {size===250 ? price :price * 2}</Typography>
+                        <Typography variant="h5" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>Price : {size===250 ? current.price : current.price * 2}</Typography>
                     </Box>
                     <Box sx={{display : "flex",gap : "3rem"}}>
                         <Button sx={buttonStyles} onClick={()=>{handleAddToCart()}}>Add to cart</Button>
