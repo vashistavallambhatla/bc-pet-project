@@ -1,4 +1,4 @@
-import { AppBar,IconButton,Typography,Toolbar,Box,Menu,MenuItem} from "@mui/material"
+import { AppBar,IconButton,Typography,Toolbar,Box,Menu,MenuItem,TextField} from "@mui/material"
 import { navbarStyle } from "../src/commonStyles"
 import PersonIcon from '@mui/icons-material/Person'
 import { useNavigate } from "react-router-dom"
@@ -16,6 +16,8 @@ const Navbar = () => {
     const user = useRecoilValue(userState)
     const [shopAnchor,setShopAnchor] = useState(null)
     const [learnAnchor,setLearnAnchor] = useState(null)
+    const [search,setSearch] = useState(false)
+    const [searchParam,setSearchParam] = useState("")
 
     const handleLogout = async() => {
         try {
@@ -32,6 +34,12 @@ const Navbar = () => {
             console.log(`Logout failed : ${error.message}`)
             throw error
         }
+    }
+
+    const handleSearch = async () => {
+        if(searchParam.trim()==="") setSearch(false)
+        if(!search) setSearch(true)
+        if(search && searchParam) navigate(`/search/${searchParam}`)
     }
 
     const handleProfile = () => {
@@ -92,10 +100,19 @@ const Navbar = () => {
                         <MenuItem onClick={() => setLearnAnchor(null)}>Brewing guides</MenuItem>
                     </Menu>
                 </Box>
-                <Box sx={{position: "relative",transform: "translateX(-25%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
+                <Box sx={{position: "fixed",left : "50%",transform: "translateX(-50%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
                     <Typography variant="h4" sx={{fontWeight: "bold",fontFamily : "Raleway"}}>Coffee Zyada</Typography>
                 </Box>
-                <Box sx={{gap : "1rem"}}>
+                <Box sx={{gap : "1rem",display : "flex"}}>
+                    {
+                        search && 
+                        <TextField id="standard-basic" label="Search coffee" variant="standard" onChange={(e) => [setSearchParam(e.target.value)]}/>
+                    }
+                    { 
+                        <Box onClick={handleSearch}>
+                            <img src="src/assets/icons8-search-100.png" alt="search" width={"50px"}></img>
+                        </Box>
+                    }
                     <IconButton onClick={()=>{navigate("/cart")}}>
                         <ShoppingBagOutlinedIcon/>
                     </IconButton>

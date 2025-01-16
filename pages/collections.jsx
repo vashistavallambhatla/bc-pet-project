@@ -42,7 +42,7 @@ const Collections = () => {
 
     },[])
 
-    if(!products) return <div></div>
+    if(!products) return <div>No products founnd!</div>
 
     return (
         <Container maxWidth={false} sx={{display : "flex",justifyContent : "center",marginTop : "5rem"}}>

@@ -17,6 +17,7 @@ import Cart from '../pages/cart'
 import Collections from '../pages/collections'
 import CheckOut from '../pages/checkout'
 import ConfirmationPage from '../pages/confirmationPage'
+import Search from '../pages/search'
 
 function App() {
   const user = useRecoilValue(userState)
@@ -40,6 +41,7 @@ function App() {
           <Route path={"/checkout"} element={<CheckOut/>}/>
           <Route path={"/collections/:collection"} element={<Collections/>}/>
           <Route path={"/confirmed"} element={<ConfirmationPage/>}/>
+          <Route path={"/search/:searchQuery"} element={<Search/>}/>
         </Routes>
       </Router>
     </>
