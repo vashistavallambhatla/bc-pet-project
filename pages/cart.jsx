@@ -20,8 +20,6 @@ const Cart = () => {
     const [cartUpdated,setCartUpdated] = useRecoilState(cartUpdatedAtom)
     const cartIdRef = useRef(null)
 
-    console.log(cartIdRef)
-
     useEffect(()=>{
         if(user){
             setLoading(true)
@@ -33,7 +31,7 @@ const Cart = () => {
                     if(!cartId) throw new Error(`No cart found for user`)
                     cartIdRef.current = cartId.id
 
-                    const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,price,products(name,image_url,price)").eq("cart_id",cartId.id)
+                    const {data : cartItems,error : cartItemsError} = await supabase.from("cart_items").select("id,product_id,quantity,weight,price,grind_size,products(name,image_url,price)").eq("cart_id",cartId.id)
 
                     if(cartItemsError) throw new Error(`Error fetching productIds : ${cartItemsError.message}`)
                     
@@ -56,7 +54,6 @@ const Cart = () => {
 
     const handleNext = async() => {
         try{
-            console.log(cartIdRef)
             const final = totalPrice.toFixed(2)
             const {error} = await supabase.from("cart").update({total : final}).eq("id",cartIdRef.current)
             if(error) throw new Error('Error while finalizing the cart total',error.message)

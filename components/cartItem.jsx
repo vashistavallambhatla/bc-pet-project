@@ -23,7 +23,7 @@ const CartItem = ({item}) => {
             console.error(`Error: `,error)
         }
     }
-    
+
     const debouncedUpdate = useCallback(
         debounce( async(cartItemId,newQuantity,updatedPrice) => {
             try {
@@ -67,11 +67,12 @@ const CartItem = ({item}) => {
                 <Box sx={{display : "flex",gap : "2rem"}}>
                     <Box sx={{display: "flex",gap: "1rem",alignItems: "center",justifyContent: "center"}}>
                         <button onClick={handleDecrement}>-</button>
-                        <Typography>Quantity: {quantity}</Typography>
+                        <Typography>Quantity : {quantity}</Typography>
                         <button onClick={handleIncrement}>+</button>
                     </Box>
                     <Typography>Size: {item.weight}g</Typography>
                 </Box>
+                <Typography>{item.grind_size}</Typography>
                 <Typography variant="h7" sx={{fontWeight : "bold"}}>Rs.{item.price}</Typography>
             </Box>
             <IconButton onClick={()=>{handleDelete(item.id)}} >

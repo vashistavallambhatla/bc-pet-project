@@ -38,24 +38,46 @@ function getStepContent(step){
 }
 
 const CheckOut = () => {
+    const navigate = useNavigate()
+
     const [activeStep,setActiveStep] = useState(0)
+    const [errorToast,setErrorToast] = useState(null)
+    const [showConfirming,setShowConfirming] = useState(false)
     const cart = useRecoilValue(cartAtom)
-    const [addressForm,setAddressForm] = useRecoilState(addressFormAtom)
-    const [paymentForm,setPaymentForm] = useRecoilState(paymentFormAtom)
     const user = useRecoilValue(userState)
     const total = useRecoilValue(totalAtom)
-    const navigate = useNavigate()
-    const [showConfirming,setShowConfirming] = useState(false)
+    const [addressForm,setAddressForm] = useRecoilState(addressFormAtom)
+    const [paymentForm,setPaymentForm] = useRecoilState(paymentFormAtom)
+
     const [saveCard,setSaveCard]= useRecoilState(saveBillingAddress)
     const [saveAddress,setSaveAddress] = useRecoilState(saveShippingAddress)
     const [newAddress,setNewAddress] = useRecoilState(newAddressAtom)
     const [newCard,setNewCard] = useRecoilState(newCardAtom)
+
     const setSelectedAddress = useSetRecoilState(selectedAddressAtom)
     const setSelectedCard = useSetRecoilState(selectedCardAtom)
     const setUseAddress = useSetRecoilState(useShippingAtom)
     const setUseBilling = useSetRecoilState(useBillingAtom)
-    const [errorToast,setErrorToast] = useState(null)
+    const setAddressOpen = useSetRecoilState(newAddressOpen)
+    const setCardOpen = useSetRecoilState(newPaymentCardOpen)
 
+    const resetState = () => {
+      setAddressForm({});
+      setPaymentForm({});
+      setNewAddress(null);
+      setNewCard(null);
+      setSaveCard(false);
+      setSaveAddress(false);
+      setSelectedAddress(null);
+      setSelectedCard(null);
+      setUseAddress(false);
+      setUseBilling(false);
+      setAddressOpen(false);
+      setCardOpen(false);
+      sessionStorage.removeItem("shippingAddress");
+      sessionStorage.removeItem("billingAddress");
+    };
+  
     const handleOrder = async () => {
       try {
         setShowConfirming(true)
@@ -129,20 +151,7 @@ const CheckOut = () => {
         if(saveCard && paymentForm) await saveBillingDetails()
 
         await deleteCartItems()
-
-        sessionStorage.removeItem("shippingAddress")
-        sessionStorage.removeItem("billingAddress")
-        setAddressForm({})
-        setPaymentForm({})
-        setNewAddress(null)
-        setNewCard(null)
-        setSaveCard(false)
-        setSaveAddress(false)
-        setSelectedAddress(null)
-        setSelectedCard(null)
-        setUseAddress(false)
-        setUseBilling(false)
-        
+        resetState()
         navigate("/confirmed")
       } catch (error) {
         console.error('Error in handleOrder:', error);
@@ -169,27 +178,23 @@ const CheckOut = () => {
     
     const handleNext = () => {
       if(activeStep === 0){
-
         if(validateAddress(addressForm)){
           setActiveStep(currentStep => currentStep+1)
           if(newAddress) sessionStorage.setItem("shippingAddress",JSON.stringify(newAddress))
         } 
         else alert("Fill in all the fields")
 
-      } else if(activeStep === 1){
+      } 
+      else if(activeStep === 1){
         const validation = isPaymentFormValid(paymentForm)
-
         if(validation.isValid){
           setActiveStep(currentStep => currentStep+1)
-          console.log(JSON.stringify(paymentForm))
-          console.log()
           if(newCard) sessionStorage.setItem("billingAddress",JSON.stringify(newCard))
         } 
         else {
           setErrorToast(validation.errorMessage)
           setTimeout(()=>{setErrorToast(null)},500)
         }
-
       }
       else if(activeStep === steps.length - 1) {
         handleOrder();
