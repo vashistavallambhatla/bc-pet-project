@@ -9,8 +9,10 @@ import OrderItem from "../components/orderItems"
 import { ClipLoader } from "react-spinners"
 import { orderItemsAtom } from "../atoms/state/cartAtom"
 import { userDetailsAtom } from "../atoms/state/userAtom"
-import { coffee } from "../src/commonStyles"
+import { coffee,orderBoxStyle } from "../src/commonStyles"
 import Grid from '@mui/material/Grid2';
+import { useNavigate } from "react-router-dom"
+import OrderDetails from "../components/orderDetails"
 
 const buttonStyle = {
     backgroundColor: coffee,
@@ -22,17 +24,8 @@ const buttonStyle = {
     padding: "10px 40px"
 }
 
-const orderBoxStyle = {
-    textTransform: "uppercase",
-    width: "500px",
-    textAlign: "center",
-    borderRadius: "10px",
-    padding: "20px",
-    backgroundColor: white,
-    boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",
-}
-
 const Profile = () => {
+    const navigate = useNavigate()
     const user = useRecoilValue(userState)
     const [userDetails, setUserDetails] = useRecoilState(userDetailsAtom)
     const [orderItems, setOrderItems] = useRecoilState(orderItemsAtom)
@@ -60,13 +53,11 @@ const Profile = () => {
                 setLoading(true)
                 try {
                     const [userResponse, ordersResponse] = await Promise.all([
-                        
                         supabase
                             .from('users')
                             .select('*')
                             .eq('id', user.id)
                             .single(),
-            
                         supabase
                             .from("orders")
                             .select(`
@@ -75,6 +66,7 @@ const Profile = () => {
                                     quantity,
                                     price,
                                     weight,
+                                    grind_size,
                                     products(name, image_url, price)
                                 )
                             `)
@@ -104,10 +96,11 @@ const Profile = () => {
         }
 
         return orderItems.map((order) => (
-            <Box key={order.order_id} sx={orderBoxStyle}>
+            <Box key={order.order_id} sx={orderBoxStyle} onClick={()=>{navigate('/orderDetails',{state : {data : order}})}}>
                 {order.order_items.map((item) => (
                     <OrderItem key={item.id} item={item} />
                 ))}
+                <Typography sx={{fontWeight : "bold",transform : "translateX(5%)",mt : "1rem"}}>Total : rs.{order.total_amount}</Typography>
             </Box>
         ))
     }

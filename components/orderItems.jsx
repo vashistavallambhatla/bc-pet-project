@@ -3,12 +3,10 @@ import { Container,Box, Typography } from "@mui/material"
 
 const OrderItem = ({item}) => {
 
-    console.log(item)
-
     return (
         <Container maxWidth={false} sx={{display : "flex",gap : "2rem",backgroundColor : "white",padding : "20px",backgroundColor : "white"}}>
             <Box>
-                <img src={item.products.image_url} style={{width : "100px",height : "100px"}}></img>
+                <img src={item.products.image_url} style={{width : "130px",height : "130px"}}></img>
             </Box>
             <Box sx={{display : "flex",flexDirection : "column", justifyContent : "center",gap : "0.5rem",width : "100%"}}>
                 <Typography variant="h7" sx={{fontWeight : "bold",fontFamily : "Raleway"}}>{item.products.name}</Typography>
@@ -17,6 +15,7 @@ const OrderItem = ({item}) => {
                     <Typography>Quantity: {item.quantity}</Typography>
                     <Typography>Size: {item.weight}g</Typography>
                 </Box>
+                <Typography>{item.grind_size}</Typography>
             </Box>
         </Container>
     )

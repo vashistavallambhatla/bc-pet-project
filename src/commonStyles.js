@@ -43,9 +43,19 @@ const coffeeForEveryOneImg = {width : "400px",height : "500px",objectFit : "cove
 
 const homePageLeftBox = {width : "500px",display : "flex",flexDirection : "column"}
 
+const orderBoxStyle = {
+  textTransform: "uppercase",
+  width: "500px",
+  textAlign: "center",
+  borderRadius: "10px",
+  padding: "20px",
+  backgroundColor: white,
+  boxShadow: "4px 4px 10px rgba(0, 0, 0, 0.3)",
+}
+
 const profilePageCards = {textTransform : "uppercase",width : "600px",alignItems : "center",borderRadius : "10px",padding : "30px 50px",backgroundColor : white,marginTop : "50px",display : "flex",flexDirection : "column",gap : "1rem"}
 
-export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme,coffee}
+export {buttonStyles,formHeadings,authSwitchBtn,navbarStyle,authContainer,productCardBtn,coffeeForEveryOneImg,homePageHeadings,homePageLeftBox,white,profilePageCards,theme,coffee,orderBoxStyle}
 
 import { createTheme } from '@mui/material/styles';
 
