@@ -76,6 +76,9 @@ const CheckOut = () => {
           order_id: orderId,
           product_id: cartItem.product_id,
           quantity: cartItem.quantity,
+          price : cartItem.price,
+          weight : cartItem.weight,
+          grind_size : cartItem.grind_size
         }));
     
         const { data: orderItemsData, error: orderItemsError } = await supabase.from("order_items").insert(orderItems).select();

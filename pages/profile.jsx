@@ -73,6 +73,8 @@ const Profile = () => {
                                 *,
                                 order_items(
                                     quantity,
+                                    price,
+                                    weight,
                                     products(name, image_url, price)
                                 )
                             `)
