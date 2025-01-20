@@ -139,10 +139,10 @@ const Profile = () => {
                 <Box sx={profilePageCards}>
                     <Grid container spacing={3}>
                         <Grid item size={6}>
-                            <TextField label="First Name" name="first_name" defaultValue={userDetails?.first_name} onChange={handleChange}/>
+                            <TextField fullWidth label="First Name" name="first_name" defaultValue={userDetails?.first_name} onChange={handleChange}/>
                         </Grid>
                         <Grid item size={6}>
-                            <TextField label="Last Name" name="last_name" value={userDetails?.last_name} onChange={handleChange}/>
+                            <TextField fullWidth label="Last Name" name="last_name" value={userDetails?.last_name} onChange={handleChange}/>
                         </Grid>
                         <Grid item size={12}>
                             <TextField fullWidth label="Email" name="email" value={userDetails?.email} onChange={handleChange}/>
@@ -151,10 +151,10 @@ const Profile = () => {
                             <TextField fullWidth label="Address" name="address" value={userDetails?.address} onChange={handleChange}/>
                         </Grid>
                         <Grid item size={6}>
-                            <TextField label="Contact number" name="phone_number" value={userDetails?.phone_number} onChange={handleChange}/>
+                            <TextField fullWidth label="Contact number" name="phone_number" value={userDetails?.phone_number} onChange={handleChange}/>
                         </Grid>
                         <Grid item size={6}>
-                            <TextField label="Date of birth" name="dob" value={userDetails?.dob} onChange={handleChange}/>
+                            <TextField fullWidth label="Date of birth" name="dob" value={userDetails?.dob} onChange={handleChange}/>
                         </Grid>
                     </Grid>
                     <Button 

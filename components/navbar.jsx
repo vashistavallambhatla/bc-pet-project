@@ -9,6 +9,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { userState } from "../atoms/state/userAtom"
 import supabase from "../supabase/supabaseClient"
 import { useState } from "react"
+import SearchBar from "./searchBar"
+import { searchQueryAtom } from "../atoms/state/generalAtom"
 
 const Navbar = () => {
     const navigate = useNavigate()
@@ -17,7 +19,7 @@ const Navbar = () => {
     const [shopAnchor,setShopAnchor] = useState(null)
     const [learnAnchor,setLearnAnchor] = useState(null)
     const [search,setSearch] = useState(false)
-    const [searchParam,setSearchParam] = useState("")
+    const [searchParam,setSearchParam] = useRecoilState(searchQueryAtom)
 
     const handleLogout = async() => {
         try {
@@ -105,14 +107,14 @@ const Navbar = () => {
                 <Box sx={{position: "absolute",left : "50%",transform: "translateX(-50%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
                     <Typography variant="h4" sx={{fontWeight: "bold",fontFamily : "Raleway"}}>Coffee Zyada</Typography>
                 </Box>
-                <Box sx={{gap : "1rem",display : "flex"}}>
+                <Box sx={{gap : "1rem",display : "flex",position : "relative"}}>
                     {
                         search && 
                         <Box>
-                            <TextField id="standard-basic" label="Search coffee" variant="standard" onChange={(e) => [setSearchParam(e.target.value)]}/>
+                            <SearchBar/>
                         </Box>
                     }
-                    <IconButton onClick={handleSearch}>
+                    <IconButton onClick={handleSearch} sx={{display : "flex",alignItems : "center"}}>
                         <SearchIcon/>
                     </IconButton>
                     <IconButton onClick={()=>{navigate("/cart")}}>

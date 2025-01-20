@@ -70,7 +70,7 @@ const Product = () => {
         }
 
         getProduct()
-    },[])
+    },[productId])
 
     const handleAddToCart = async () => {
         if(!user){
