@@ -41,7 +41,7 @@ function App() {
           <Route path={"/cart"} element={<Cart/>}/>
           <Route path={"/checkout"} element={<CheckOut/>}/>
           <Route path={"/collections/:collection"} element={<Collections/>}/>
-          <Route path={"/confirmed"} element={<ConfirmationPage/>}/>
+          <Route path={"/confirmed/:orderId"} element={<ConfirmationPage/>}/>
           <Route path={"/search/:searchQuery"} element={<Search/>}/>
           <Route path={"/orderDetails"} element={<OrderDetails data={null}/>}/>
         </Routes>

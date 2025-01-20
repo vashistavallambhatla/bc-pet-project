@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import Review from "../components/review";
 import { coffee } from "../src/commonStyles";
 import { useRecoilValue,useRecoilState, useSetRecoilState } from "recoil";
-import {addressFormAtom, cartAtom, newAddressAtom, newAddressOpen, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, selectedAddressAtom, selectedCardAtom, totalAtom, useBillingAtom, useShippingAtom} from "../atoms/state/cartAtom.js"
+import {addressFormAtom, cartAtom, cartId, newAddressAtom, newAddressOpen, newCardAtom, newPaymentCardOpen, paymentFormAtom, saveBillingAddress, saveShippingAddress, selectedAddressAtom, selectedCardAtom, totalAtom, useBillingAtom, useShippingAtom} from "../atoms/state/cartAtom.js"
 import supabase from "../supabase/supabaseClient.js";
 import { userState } from "../atoms/state/userAtom.js";
 import { useNavigate } from "react-router-dom";
@@ -152,7 +152,7 @@ const CheckOut = () => {
 
         await deleteCartItems()
         resetState()
-        navigate("/confirmed")
+        navigate(`/confirmed/${orderId}`)
       } catch (error) {
         console.error('Error in handleOrder:', error);
       } finally{
@@ -178,12 +178,15 @@ const CheckOut = () => {
     
     const handleNext = () => {
       if(activeStep === 0){
-        if(validateAddress(addressForm)){
+        const validation = validateAddress(addressForm)
+        if(validation.isValid){
           setActiveStep(currentStep => currentStep+1)
           if(newAddress) sessionStorage.setItem("shippingAddress",JSON.stringify(newAddress))
         } 
-        else alert("Fill in all the fields")
-
+        else {
+          setErrorToast(validation.errorMessage)
+          setTimeout(()=>{setErrorToast(null)},500)
+        }
       } 
       else if(activeStep === 1){
         const validation = isPaymentFormValid(paymentForm)

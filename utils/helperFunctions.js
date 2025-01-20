@@ -11,10 +11,10 @@ function validateAddress(address) {
       ];
 
     for(const field of requiredFields) {
-        if(!address[field] || address[field].trim() === "") return false
+        if(!address[field] || address[field].trim() === "") return {isValid : false,errorMessage : "Empty address"}
     }
 
-    return true
+    return {isValid : true}
 }
 
 function isPaymentFormValid(paymentForm){
