@@ -48,9 +48,8 @@ const SearchBar = () => {
     },[])
 
     return (
-        <Box sx={{position : "absolute",top : 0,left : "-90%"}}>
+        <Box sx={{position : "absolute",top : 10,left : "-90%"}}>
             <TextField
-                label="Search Coffee"
                 variant="standard"
                 fullWidth
                 value={searchQuery}
@@ -61,8 +60,8 @@ const SearchBar = () => {
                     <List>
                         {
                             results.map((result) => (
-                                <ListItem key={result.id} sx={{backgroundColor : "white"}} onClick={()=>{navigate(`/product/${result.id}`)}}>
-                                  <ListItemText primary={result.name} />
+                                <ListItem key={result.id} sx={{backgroundColor : "white",cursor : "pointer"}} onClick={()=>{navigate(`/product/${result.id}`)}}>
+                                  <ListItemText primary={result.name} sx={{textTransform : "lowercase"}}/>
                                 </ListItem>
                               ))
                         }
