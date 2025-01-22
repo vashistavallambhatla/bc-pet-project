@@ -96,7 +96,10 @@ const Navbar = () => {
                             <SearchBar/>
                         </Box>
                     }
-                    <IconButton onClick={handleSearch} sx={{display : "flex",alignItems : "center"}}>
+                    <IconButton onClick={()=>{
+                        setSearchParam("")
+                        handleSearch()
+                    }} sx={{display : "flex",alignItems : "center"}}>
                         <SearchIcon/>
                     </IconButton>
                     <IconButton onClick={()=>{navigate("/cart")}}>

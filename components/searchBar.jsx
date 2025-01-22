@@ -60,7 +60,10 @@ const SearchBar = () => {
                     <List>
                         {
                             results.map((result) => (
-                                <ListItem key={result.id} sx={{backgroundColor : "white",cursor : "pointer"}} onClick={()=>{navigate(`/product/${result.id}`)}}>
+                                <ListItem key={result.id} sx={{backgroundColor : "white",cursor : "pointer"}} onClick={()=>{
+                                    setSearchQuery("")
+                                    navigate(`/product/${result.id}`)
+                                }}>
                                   <ListItemText primary={result.name} sx={{textTransform : "lowercase"}}/>
                                 </ListItem>
                               ))

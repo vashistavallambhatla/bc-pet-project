@@ -36,7 +36,7 @@ const Search = () => {
         );
     }
 
-    if(searchResults.length===0) return <div style={{display : "flex",justifyContent : "center",alignItems : "center",height : "80vh"}}>No products found!</div>
+    if(searchResults.length===0) return <div style={{display : "flex",justifyContent : "center",alignItems : "center",height : "80vh",fontWeight : "bolder",fontSize : "2rem"}}>{`No products found :(`}</div>
 
     return (
         <Container maxWidth={false} sx={{display : "flex",justifyContent : "center",marginTop : "5rem"}}>
