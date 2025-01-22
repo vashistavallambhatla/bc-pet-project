@@ -10,7 +10,7 @@ const CoffeeForEveryOne = () => {
             maxWidth: '100vw !important',
             overflowX: 'hidden'}}>
             <Box sx={{display : "flex",gap : "4em"}}>
-            <Box sx={homePageLeftBox                        }>
+            <Box sx={homePageLeftBox}>
                 <Typography sx={homePageHeadings}>COFFEE FOR EVERYONE</Typography>
                 <Typography>Whether you just started your coffee journey or you’re a seasoned coffee-lover, there’s something for everyone to sip on.</Typography>
             </Box>

@@ -85,24 +85,6 @@ const Navbar = () => {
                             setShopAnchor(null)
                         }}>Easy Cold Brew Bags</MenuItem>
                     </Menu>
-                    <Typography id="learn-and-do-dropdown" onClick={(e)=>{setLearnAnchor(e.currentTarget)}} sx={{cursor : "pointer"}} >learn & do</Typography>
-                    <Menu
-                        id="learn-and-do-dropdown"
-                        anchorEl={learnAnchor}
-                        open={Boolean(learnAnchor)}
-                        onClose={()=>{setLearnAnchor(null)}}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                       }}
-                       sx={{zIndex : 7000}}
-                   >
-                        <MenuItem onClick={() => setLearnAnchor(null)}>Brewing guides</MenuItem>
-                    </Menu>
                 </Box>
                 <Box sx={{position: "absolute",left : "50%",transform: "translateX(-50%)",alignItems : "center",cursor : "pointer"}} onClick={()=>{navigate("/")}}>
                     <Typography variant="h4" sx={{fontWeight: "bold",fontFamily : "Raleway"}}>Coffee Zyada</Typography>
